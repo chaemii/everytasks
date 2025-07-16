@@ -16,7 +16,7 @@ struct ADHDTheme {
     static let primaryText = charcoal
     static let secondaryText = charcoal.opacity(0.7)
     static let accentColor = mainPoint
-    static let successColor = Color.green
+    static let successColor = Color(hex: "A4D0B4")
     static let warningColor = subColor3
     static let errorColor = Color.red
     
@@ -24,7 +24,6 @@ struct ADHDTheme {
     static let priorityHigh = subColor3
     static let priorityMedium = subColor2
     static let priorityLow = mainPoint
-
     
     // MARK: - Calendar Colors
     static let calendarBackground = cardBackground

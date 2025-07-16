@@ -9,14 +9,7 @@ struct MainView: View {
     @State private var currentWeekOffset = 0
     @State private var currentMonthOffset = 0
     
-    // 샘플 데이터
-    @State private var sampleTasks: [Task] = [
-        Task(title: "물마시기", subtitle: "", priority: .normal, streak: 3),
-        Task(title: "운동하기", subtitle: "", priority: .normal, streak: 1),
-        Task(title: "색상선택", subtitle: "", priority: .normal, streak: 3),
-        Task(title: "매일 블로그", subtitle: "3개 쓰기", priority: .normal, streak: 3),
-        Task(title: "카레 요리하기", subtitle: "맛있겠당", priority: .low, streak: 0)
-    ]
+
     
     enum CalendarPeriod: String, CaseIterable {
         case daily = "일간"
@@ -36,11 +29,18 @@ struct MainView: View {
                 // Period Selector
                 periodSelector
                 
-                // Calendar View
-                calendarView
-                
-                // Task List
-                taskListView
+                // Content View (Calendar + Task List)
+                if selectedPeriod == .monthly {
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            calendarView
+                            taskListView
+                        }
+                    }
+                } else {
+                    calendarView
+                    taskListView
+                }
                 
                 Spacer()
             }
@@ -92,7 +92,7 @@ struct MainView: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(selectedPeriod == period ? .white : .secondaryText)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+                        .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(selectedPeriod == period ? Color.mainPoint : Color.clear)
@@ -102,7 +102,7 @@ struct MainView: View {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 8)
+        .padding(.vertical, 6)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.cardBackground)
@@ -203,8 +203,8 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(
-                            Circle()
-                                .fill(isSelected ? Color.mainPoint : Color.clear)
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.clear)
                         )
                     }
                     .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
@@ -272,27 +272,33 @@ struct MainView: View {
                             selectedDate = date
                         }
                     }) {
-                        VStack(spacing: 2) {
+                        VStack(spacing: 4) {
+                            // Date text at top
                             Text("\(Calendar.current.component(.day, from: date))")
                                 .font(.system(size: 14, weight: isToday ? .bold : .medium))
                                 .foregroundColor(isSelected ? .white : (isToday ? .mainPoint : .primaryText))
+                                .frame(maxWidth: .infinity, alignment: .top)
                             
+                            Spacer()
+                            
+                            // Todo items (up to 4 characters)
                             if hasEvents {
-                                VStack(spacing: 1) {
-                                    Text("일정있음..")
+                                let todos = todosForDate(date)
+                                let displayText = todos.prefix(2).map { String($0.title.prefix(2)) }.joined()
+                                if !displayText.isEmpty {
+                                    Text(displayText)
                                         .font(.system(size: 8, weight: .medium))
-                                        .foregroundColor(.subColor2)
-                                    Text("다른 건없")
-                                        .font(.system(size: 8, weight: .medium))
-                                        .foregroundColor(.subColor3)
+                                        .foregroundColor(.secondaryText)
+                                        .lineLimit(1)
+                                        .frame(maxWidth: .infinity, alignment: .bottom)
                                 }
                             }
                         }
-                        .frame(height: 40)
+                        .frame(height: 50)
                         .frame(maxWidth: .infinity)
                         .background(
-                            Circle()
-                                .fill(isSelected ? Color.mainPoint : Color.clear)
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.clear)
                         )
                     }
                     .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
@@ -306,14 +312,17 @@ struct MainView: View {
         VStack(spacing: 16) {
             // Header
             HStack {
-                Text("오늘 할 일")
+                Text("\(weekFormatter.string(from: selectedDate)) 할 일")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.primaryText)
                 
                 Spacer()
                 
-                let completedCount = sampleTasks.filter { $0.isCompleted }.count
-                Text("\(completedCount)/\(sampleTasks.count)")
+                let selectedDateTodos = todosForDate(selectedDate)
+                let selectedDateHabits = habitsForDate(selectedDate)
+                let totalItems = selectedDateTodos.count + selectedDateHabits.count
+                let completedCount = selectedDateTodos.filter { $0.isCompleted }.count + selectedDateHabits.filter { isHabitCompletedForDate($0, date: selectedDate) }.count
+                Text("\(completedCount)/\(totalItems)")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.secondaryText)
             }
@@ -321,21 +330,39 @@ struct MainView: View {
             .padding(.top, 20)
             
             // Task List
-            ScrollView {
-                LazyVStack(spacing: 12) {
-                    if sampleTasks.isEmpty {
-                        emptyStateView
-                    } else {
-                        ForEach(sampleTasks) { task in
-                            ADHDTheme.TaskCard(task: task) {
-                                toggleTask(task)
-                            }
+            LazyVStack(spacing: 12) {
+                let selectedDateTodos = todosForDate(selectedDate)
+                let selectedDateHabits = habitsForDate(selectedDate)
+                
+                if selectedDateTodos.isEmpty && selectedDateHabits.isEmpty {
+                    emptyStateView
+                } else {
+                    // Habits first (if any)
+                    ForEach(selectedDateHabits) { habit in
+                        HabitTaskCard(habit: habit, date: selectedDate) {
+                            toggleHabitCompletion(habit, date: selectedDate)
                         }
                     }
+                    
+                    // Then todos
+                    ForEach(selectedDateTodos) { todo in
+                        TodoTaskCard(
+                            todo: todo,
+                            onToggle: {
+                                toggleTodoCompletion(todo)
+                            },
+                            onEdit: {
+                                // TODO: 수정 기능 구현
+                            },
+                            onDelete: {
+                                dataManager.deleteTodo(todo)
+                            }
+                        )
+                    }
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 100) // FAB 공간 확보
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
         }
     }
     
@@ -387,15 +414,14 @@ struct MainView: View {
     
     // MARK: - Helper Methods
     private func getTodayProgress() -> Double {
-        guard !sampleTasks.isEmpty else { return 0.0 }
-        let completedCount = sampleTasks.filter { $0.isCompleted }.count
-        return Double(completedCount) / Double(sampleTasks.count)
-    }
-    
-    private func toggleTask(_ task: Task) {
-        if let index = sampleTasks.firstIndex(where: { $0.id == task.id }) {
-            sampleTasks[index].isCompleted.toggle()
-        }
+        let selectedDateTodos = todosForDate(selectedDate)
+        let selectedDateHabits = habitsForDate(selectedDate)
+        let totalItems = selectedDateTodos.count + selectedDateHabits.count
+        
+        guard totalItems > 0 else { return 0.0 }
+        
+        let completedCount = selectedDateTodos.filter { $0.isCompleted }.count + selectedDateHabits.filter { isHabitCompletedForDate($0, date: selectedDate) }.count
+        return Double(completedCount) / Double(totalItems)
     }
     
     private func getWeekDates() -> [Date] {
@@ -447,6 +473,26 @@ struct MainView: View {
             Calendar.current.isDate(todo.createdDate, inSameDayAs: date)
         }
     }
+    
+    private func habitsForDate(_ date: Date) -> [Habit] {
+        return dataManager.habits.filter { habit in
+            habit.isActive
+        }
+    }
+    
+    private func isHabitCompletedForDate(_ habit: Habit, date: Date) -> Bool {
+        return habit.completedDates.contains { completedDate in
+            Calendar.current.isDate(completedDate, inSameDayAs: date)
+        }
+    }
+    
+    private func toggleHabitCompletion(_ habit: Habit, date: Date) {
+        dataManager.completeHabit(habit, for: date)
+    }
+    
+    private func toggleTodoCompletion(_ todo: Todo) {
+        dataManager.toggleTodoCompletion(todo)
+    }
 }
 
 // MARK: - Add Task View
@@ -464,7 +510,7 @@ struct AddTaskView: View {
                 // Title Input
                 VStack(alignment: .leading, spacing: 8) {
                     Text("제목")
-                        .font(.headline)
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primaryText)
                     
                     TextField("할 일을 입력하세요", text: $title)
@@ -474,7 +520,7 @@ struct AddTaskView: View {
                 // Subtitle Input
                 VStack(alignment: .leading, spacing: 8) {
                     Text("부제목")
-                        .font(.headline)
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primaryText)
                     
                     TextField("추가 설명 (선택사항)", text: $subtitle)
@@ -484,15 +530,30 @@ struct AddTaskView: View {
                 // Priority Selection
                 VStack(alignment: .leading, spacing: 8) {
                     Text("우선순위")
-                        .font(.headline)
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primaryText)
                     
-                    Picker("우선순위", selection: $priority) {
-                        ForEach(TaskPriority.allCases, id: \.self) { priority in
-                            Text(priority.displayText).tag(priority)
+                    HStack(spacing: 8) {
+                        ForEach(TaskPriority.allCases, id: \.self) { priorityOption in
+                            Button(action: {
+                                priority = priorityOption
+                            }) {
+                                Text(priorityOption.displayText)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(priority == priorityOption ? .white : priorityOption.color)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(priority == priorityOption ? priorityOption.color : Color.clear)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(priorityOption.color, lineWidth: 1)
+                                            )
+                                    )
+                            }
                         }
                     }
-                    .pickerStyle(SegmentedPickerStyle())
                 }
                 
                 Spacer()
@@ -511,6 +572,7 @@ struct AddTaskView: View {
                 .modernButton(backgroundColor: .mainPoint, foregroundColor: .white)
             }
             .padding()
+            .background(Color(hex: "F7F5F2"))
             .navigationTitle("새 할 일")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -538,6 +600,157 @@ struct AddTaskView: View {
 #Preview {
     MainView()
         .environmentObject(DataManager())
+}
+
+// MARK: - Habit Task Card
+struct HabitTaskCard: View {
+    let habit: Habit
+    let date: Date
+    let onToggle: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: onToggle) {
+                Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 24))
+                    .foregroundColor(isCompleted ? .successColor : .secondaryText)
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(habit.title)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primaryText)
+                    
+                    Spacer()
+                    
+                    Text("습관")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.mainPoint)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(Color.mainPoint.opacity(0.1))
+                        )
+                }
+                
+                if !habit.description.isEmpty {
+                    Text(habit.description)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondaryText)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .cornerRadius(16)
+        .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
+    }
+    
+    private var isCompleted: Bool {
+        return habit.completedDates.contains { completedDate in
+            Calendar.current.isDate(completedDate, inSameDayAs: date)
+        }
+    }
+}
+
+// MARK: - Todo Task Card
+struct TodoTaskCard: View {
+    let todo: Todo
+    let onToggle: () -> Void
+    let onEdit: () -> Void
+    let onDelete: () -> Void
+    @State private var showingActions = false
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: onToggle) {
+                Image(systemName: todo.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 24))
+                    .foregroundColor(todo.isCompleted ? .successColor : .secondaryText)
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(todo.title)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primaryText)
+                    
+                    Spacer()
+                    
+                    Text(todo.priority.displayName)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(todo.priority.color)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(todo.priority.color.opacity(0.1))
+                        )
+                }
+                
+                if !todo.description.isEmpty {
+                    Text(todo.description)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondaryText)
+                }
+            }
+            
+            Spacer()
+            
+            // Three dots menu button
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showingActions.toggle()
+                }
+            }) {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.secondaryText)
+                    .rotationEffect(.degrees(90))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .secondaryText)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .cornerRadius(16)
+        .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
+        .offset(x: showingActions ? -120 : 0)
+        .overlay(
+            HStack {
+                Spacer()
+                
+                if showingActions {
+                    HStack(spacing: 8) {
+                        Button(action: onEdit) {
+                            Image(systemName: "pencil")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 32, height: 32)
+                                .background(Color(hex: "B3D3BD"))
+                                .cornerRadius(8)
+                        }
+                        
+                        Button(action: onDelete) {
+                            Image(systemName: "trash")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 32, height: 32)
+                                .background(Color(hex: "282828"))
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(.trailing, 16)
+                    .transition(.move(edge: .trailing))
+                }
+            }
+        )
+    }
 }
 
 // MARK: - DateFormatters

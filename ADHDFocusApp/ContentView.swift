@@ -31,6 +31,7 @@ struct ContentView: View {
                 // Custom Tab Bar
                 customTabBar
             }
+            .ignoresSafeArea(.container, edges: .bottom)
             
             // Floating Action Button (할 일 탭에서만 표시)
             if selectedTab == 0 {
@@ -38,10 +39,18 @@ struct ContentView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        ADHDTheme.FloatingActionButton(
-                            action: { showingAddTask = true },
-                            icon: "plus"
-                        )
+                        Button(action: { showingAddTask = true }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 56, height: 56)
+                                .background(
+                                    Circle()
+                                        .fill(Color.mainPoint)
+                                        .shadow(color: Color.charcoal.opacity(0.2), radius: 8, x: 0, y: 4)
+                                )
+                        }
+                        .modernButton(backgroundColor: Color.clear, foregroundColor: .white)
                         .padding(.trailing, 20)
                         .padding(.bottom, 100) // 탭바 위 공간
                     }
@@ -82,12 +91,10 @@ struct ContentView: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
         .background(
-            RoundedRectangle(cornerRadius: 24)
+            Rectangle()
                 .fill(Color.cardBackground)
-                .shadow(color: Color.charcoal.opacity(0.1), radius: 8, x: 0, y: 4)
+                .shadow(color: Color.charcoal.opacity(0.1), radius: 8, x: 0, y: -4)
         )
-        .padding(.horizontal, 20)
-        .padding(.bottom, 20)
     }
     
     // MARK: - Tab Helper Methods

@@ -87,7 +87,7 @@ enum TodoPriority: String, CaseIterable, Codable {
         case .medium:
             return .blue
         case .high:
-            return .orange
+            return Color(hex: "F68566")
         case .urgent:
             return .red
         }
