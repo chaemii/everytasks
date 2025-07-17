@@ -85,13 +85,13 @@ enum TodoPriority: String, CaseIterable, Codable {
     var color: Color {
         switch self {
         case .low:
-            return .green
+            return Color(hex: "FBEACC") ?? .green
         case .medium:
-            return .blue
+            return Color(hex: "A4D0B4") ?? .blue
         case .high:
-            return Color(hex: "F68566")
+            return Color(hex: "C1E2FF") ?? Color(hex: "F68566")
         case .urgent:
-            return .red
+            return Color(hex: "F68566") ?? .red
         }
     }
 }
@@ -131,19 +131,25 @@ struct Habit: Identifiable, Codable {
     var description: String
     var category: HabitCategory
     var frequency: HabitFrequency
+    var color: String // Color를 String으로 저장 (hex 값)
     var isActive: Bool
     var createdDate: Date
     var completedDates: [Date]
+    var selectedWeekdays: [Int] // 0=일요일, 1=월요일, ..., 6=토요일
+    var selectedDayOfMonth: Int? // 월간 반복시 선택된 일자 (1-31)
     
-    init(id: UUID = UUID(), title: String, description: String = "", category: HabitCategory = .health, frequency: HabitFrequency = .daily) {
+    init(id: UUID = UUID(), title: String, description: String = "", category: HabitCategory = .health, frequency: HabitFrequency = .daily, color: String = "F68566", selectedWeekdays: [Int] = [], selectedDayOfMonth: Int? = nil) {
         self.id = id
         self.title = title
         self.description = description
         self.category = category
         self.frequency = frequency
+        self.color = color
         self.isActive = true
         self.createdDate = Date()
         self.completedDates = []
+        self.selectedWeekdays = selectedWeekdays
+        self.selectedDayOfMonth = selectedDayOfMonth
     }
 }
 
@@ -183,6 +189,15 @@ enum HabitFrequency: String, CaseIterable, Codable {
     
     var displayName: String {
         return self.rawValue
+    }
+    
+    var requiresSelection: Bool {
+        switch self {
+        case .daily:
+            return false
+        case .weekly, .monthly:
+            return true
+        }
     }
 }
 

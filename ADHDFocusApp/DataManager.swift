@@ -84,6 +84,22 @@ class DataManager: ObservableObject {
         updateHabit(updatedHabit)
     }
     
+    // MARK: - Habit Date Validation
+    func isHabitApplicableForDate(_ habit: Habit, date: Date) -> Bool {
+        let calendar = Calendar.current
+        
+        switch habit.frequency {
+        case .daily:
+            return true
+        case .weekly:
+            let weekday = calendar.component(.weekday, from: date) - 1 // 0=일요일, 1=월요일, ..., 6=토요일
+            return habit.selectedWeekdays.contains(weekday)
+        case .monthly:
+            let dayOfMonth = calendar.component(.day, from: date)
+            return habit.selectedDayOfMonth == dayOfMonth
+        }
+    }
+    
     // MARK: - Focus Session Management
     func addFocusSession(_ session: FocusSession) {
         focusSessions.append(session)

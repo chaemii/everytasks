@@ -378,31 +378,18 @@ struct MainView: View {
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 60))
+                .font(.system(size: 15))
                 .foregroundColor(.successColor)
             
             Text("선택된 날짜에 할 일이 없습니다")
-                .font(.headline)
-                .foregroundColor(.primaryText)
-            
-            Text("새로운 할 일을 추가해보세요!")
-                .font(.subheadline)
+                .font(.system(size: 16))
                 .foregroundColor(.secondaryText)
             
-            Button(action: {
-                showingAddTodo = true
-            }) {
-                Text("할 일 추가하기")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.mainPoint)
-                    .cornerRadius(15)
-            }
-            .modernButton(backgroundColor: Color.mainPoint, foregroundColor: .white)
+            Text("새로운 할 일을 추가해보세요!")
+                .font(.system(size: 14))
+                .foregroundColor(.secondaryText.opacity(0.7))
         }
         .padding(40)
-        .cardStyle()
     }
     
     // MARK: - Floating Action Button
@@ -484,7 +471,7 @@ struct MainView: View {
     
     private func habitsForDate(_ date: Date) -> [Habit] {
         return dataManager.habits.filter { habit in
-            habit.isActive
+            habit.isActive && dataManager.isHabitApplicableForDate(habit, date: date)
         }
     }
     
@@ -799,12 +786,16 @@ struct HabitTaskCard: View {
     let date: Date
     let onToggle: () -> Void
     
+    private var habitColor: Color {
+        return Color(hex: habit.color)
+    }
+    
     var body: some View {
         HStack(spacing: 12) {
             Button(action: onToggle) {
                 Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 24))
-                    .foregroundColor(isCompleted ? .successColor : .secondaryText)
+                    .foregroundColor(isCompleted ? habitColor : .secondaryText)
             }
             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
             
@@ -819,17 +810,17 @@ struct HabitTaskCard: View {
                     HStack(spacing: 4) {
                         Image(systemName: "flame.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(.mainPoint)
+                            .foregroundColor(habitColor)
                         
                         Text("\(habitStreak)")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.mainPoint)
+                            .foregroundColor(habitColor)
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
                     .background(
                         Capsule()
-                            .fill(Color.mainPoint.opacity(0.1))
+                            .fill(habitColor.opacity(0.1))
                     )
                 }
                 
@@ -843,7 +834,7 @@ struct HabitTaskCard: View {
             Spacer()
         }
         .padding()
-        .background(Color.cardBackground)
+        .background(habitColor.opacity(0.05))
         .cornerRadius(16)
         .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
     }

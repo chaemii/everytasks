@@ -1,5 +1,23 @@
 import SwiftUI
 
+// MARK: - Color Extension
+extension Color {
+    func toHex() -> String? {
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
+            return nil
+        }
+        
+        let rgb = Int(red * 255) << 16 | Int(green * 255) << 8 | Int(blue * 255)
+        return String(format: "%06X", rgb)
+    }
+}
+
 // MARK: - ADHD Focus App Color Palette
 struct ADHDTheme {
     
