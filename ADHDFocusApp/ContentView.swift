@@ -47,8 +47,8 @@ struct ContentView: View {
                                 .background(
                                     Circle()
                                         .fill(Color.mainPoint)
-                                        .shadow(color: Color.charcoal.opacity(0.2), radius: 8, x: 0, y: 4)
                                 )
+                                .shadow(color: Color.charcoal.opacity(0.2), radius: 8, x: 0, y: 4)
                         }
                         .modernButton(backgroundColor: Color.clear, foregroundColor: .white)
                         .padding(.trailing, 20)

@@ -54,16 +54,18 @@ struct Todo: Identifiable, Codable {
     var isCompleted: Bool
     var priority: TodoPriority
     var category: TodoCategory
+    var targetDate: Date
     var createdDate: Date
     var completedDate: Date?
     
-    init(id: UUID = UUID(), title: String, description: String = "", priority: TodoPriority = .medium, category: TodoCategory = .personal) {
+    init(id: UUID = UUID(), title: String, description: String = "", priority: TodoPriority = .medium, category: TodoCategory = .personal, targetDate: Date = Date()) {
         self.id = id
         self.title = title
         self.description = description
         self.isCompleted = false
         self.priority = priority
         self.category = category
+        self.targetDate = targetDate
         self.createdDate = Date()
         self.completedDate = nil
     }

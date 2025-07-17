@@ -109,7 +109,7 @@ class DataManager: ObservableObject {
     // MARK: - Task Management (for MainView)
     func addTask(_ task: Task) {
         // Task를 Todo로 변환해서 추가 (간단 변환 예시)
-        let newTodo = Todo(title: task.title, description: task.subtitle, priority: .medium, category: .personal)
+        let newTodo = Todo(title: task.title, description: task.subtitle, priority: .medium, category: .personal, targetDate: Date())
         todos.append(newTodo)
         saveData()
         updateStatistics()
@@ -143,7 +143,7 @@ class DataManager: ObservableObject {
         
         while true {
             let dayTodos = todos.filter { todo in
-                calendar.isDate(todo.createdDate, inSameDayAs: currentDate) && todo.isCompleted
+                calendar.isDate(todo.targetDate, inSameDayAs: currentDate) && todo.isCompleted
             }
             
             let dayHabits = habits.filter { habit in

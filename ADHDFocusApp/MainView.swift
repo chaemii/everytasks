@@ -4,6 +4,8 @@ import Foundation
 struct MainView: View {
     @EnvironmentObject var dataManager: DataManager
     @State private var showingAddTodo = false
+    @State private var showingEditTodo = false
+    @State private var editingTodo: Todo?
     @State private var selectedPeriod: CalendarPeriod = .daily
     @State private var selectedDate = Date()
     @State private var currentWeekOffset = 0
@@ -47,6 +49,11 @@ struct MainView: View {
         }
         .sheet(isPresented: $showingAddTodo) {
             AddTaskView()
+        }
+        .sheet(isPresented: $showingEditTodo) {
+            if let todo = editingTodo {
+                EditTaskView(todo: todo)
+            }
         }
     }
     
@@ -352,7 +359,8 @@ struct MainView: View {
                                 toggleTodoCompletion(todo)
                             },
                             onEdit: {
-                                // TODO: 수정 기능 구현
+                                editingTodo = todo
+                                showingEditTodo = true
                             },
                             onDelete: {
                                 dataManager.deleteTodo(todo)
@@ -470,7 +478,7 @@ struct MainView: View {
     
     private func todosForDate(_ date: Date) -> [Todo] {
         return dataManager.todos.filter { todo in
-            Calendar.current.isDate(todo.createdDate, inSameDayAs: date)
+            Calendar.current.isDate(todo.targetDate, inSameDayAs: date)
         }
     }
     
@@ -501,77 +509,105 @@ struct AddTaskView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var title = ""
-    @State private var subtitle = ""
-    @State private var priority: TaskPriority = .normal
+    @State private var description = ""
+    @State private var priority: TodoPriority = .medium
+    @State private var targetDate = Date()
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                // Title Input
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("제목")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.primaryText)
-                    
-                    TextField("할 일을 입력하세요", text: $title)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                }
-                
-                // Subtitle Input
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("부제목")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.primaryText)
-                    
-                    TextField("추가 설명 (선택사항)", text: $subtitle)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                }
-                
-                // Priority Selection
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("우선순위")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.primaryText)
-                    
-                    HStack(spacing: 8) {
-                        ForEach(TaskPriority.allCases, id: \.self) { priorityOption in
-                            Button(action: {
-                                priority = priorityOption
-                            }) {
-                                Text(priorityOption.displayText)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(priority == priorityOption ? .white : priorityOption.color)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(priority == priorityOption ? priorityOption.color : Color.clear)
-                                            .overlay(
+            VStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Title Input
+                        HStack(spacing: 12) {
+                            Text("제목")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            TextField("할 일을 입력하세요", text: $title)
+                                .font(.system(size: 14))
+                                .padding()
+                                .background(Color(hex: "FFFDFA"))
+                                .cornerRadius(8)
+                        }
+                        
+                        // Description Input
+                        HStack(alignment: .top, spacing: 12) {
+                            Text("설명")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            TextField("추가 설명 (선택사항)", text: $description, axis: .vertical)
+                                .font(.system(size: 14))
+                                .lineLimit(3...6)
+                                .padding()
+                                .background(Color(hex: "FFFDFA"))
+                                .cornerRadius(8)
+                        }
+                        
+                        // Priority Selection
+                        HStack(spacing: 12) {
+                            Text("우선순위")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            HStack(spacing: 8) {
+                                ForEach(TodoPriority.allCases, id: \.self) { priorityOption in
+                                    Button(action: {
+                                        priority = priorityOption
+                                    }) {
+                                        Text(priorityOption.displayName)
+                                            .font(.system(size: 12, weight: .medium))
+                                            .foregroundColor(priority == priorityOption ? .white : priorityOption.color)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(priorityOption.color, lineWidth: 1)
+                                                    .fill(priority == priorityOption ? priorityOption.color : Color.clear)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(priorityOption.color, lineWidth: 1)
+                                                    )
                                             )
-                                    )
+                                    }
+                                }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        // Date Selection
+                        HStack(spacing: 12) {
+                            Text("날짜")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            DatePicker("", selection: $targetDate, displayedComponents: .date)
+                                .datePickerStyle(CompactDatePickerStyle())
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
+                    .padding()
                 }
-                
-                Spacer()
                 
                 // Add Button
                 Button(action: addTask) {
-                    Text("할 일 추가")
-                        .font(.headline)
+                    Text("새 할 일 추가")
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.mainPoint)
-                        .cornerRadius(15)
-                        .disabled(title.isEmpty)
+                        .padding(.vertical, 16)
+                        .background(title.isEmpty ? Color(hex: "D9D9D9") : Color.mainPoint)
+                        .cornerRadius(12)
                 }
-                .modernButton(backgroundColor: .mainPoint, foregroundColor: .white)
+                .disabled(title.isEmpty)
+                .padding(.horizontal)
+                .padding(.bottom)
             }
-            .padding()
             .background(Color(hex: "F7F5F2"))
             .navigationTitle("새 할 일")
             .navigationBarTitleDisplayMode(.inline)
@@ -581,18 +617,173 @@ struct AddTaskView: View {
                         dismiss()
                     }
                 }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("저장") {
+                        addTask()
+                    }
+                    .disabled(title.isEmpty)
+                }
             }
         }
     }
     
     private func addTask() {
-        let newTask = Task(
+        let todo = Todo(
             title: title,
-            subtitle: subtitle,
-            priority: priority
+            description: description,
+            priority: priority,
+            category: .personal, // 기본 카테고리로 설정
+            targetDate: targetDate
         )
-        // 여기서 실제 데이터 매니저에 추가
-        dataManager.addTask(newTask)
+        dataManager.addTodo(todo)
+        dismiss()
+    }
+}
+
+// MARK: - Edit Task View
+struct EditTaskView: View {
+    @EnvironmentObject var dataManager: DataManager
+    @Environment(\.dismiss) private var dismiss
+    
+    let todo: Todo
+    
+    @State private var title: String
+    @State private var description: String
+    @State private var priority: TodoPriority
+    @State private var targetDate: Date
+    
+    init(todo: Todo) {
+        self.todo = todo
+        self._title = State(initialValue: todo.title)
+        self._description = State(initialValue: todo.description)
+        self._priority = State(initialValue: todo.priority)
+        self._targetDate = State(initialValue: todo.targetDate)
+    }
+    
+    var body: some View {
+        NavigationView {
+            VStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Title Input
+                        HStack(spacing: 12) {
+                            Text("제목")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            TextField("할 일을 입력하세요", text: $title)
+                                .font(.system(size: 14))
+                                .padding()
+                                .background(Color(hex: "FFFDFA"))
+                                .cornerRadius(8)
+                        }
+                        
+                        // Description Input
+                        HStack(alignment: .top, spacing: 12) {
+                            Text("설명")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            TextField("추가 설명 (선택사항)", text: $description, axis: .vertical)
+                                .font(.system(size: 14))
+                                .lineLimit(3...6)
+                                .padding()
+                                .background(Color(hex: "FFFDFA"))
+                                .cornerRadius(8)
+                        }
+                        
+                        // Priority Selection
+                        HStack(spacing: 12) {
+                            Text("우선순위")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            HStack(spacing: 8) {
+                                ForEach(TodoPriority.allCases, id: \.self) { priorityOption in
+                                    Button(action: {
+                                        priority = priorityOption
+                                    }) {
+                                        Text(priorityOption.displayName)
+                                            .font(.system(size: 12, weight: .medium))
+                                            .foregroundColor(priority == priorityOption ? .white : priorityOption.color)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(priority == priorityOption ? priorityOption.color : Color.clear)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(priorityOption.color, lineWidth: 1)
+                                                    )
+                                            )
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        // Date Selection
+                        HStack(spacing: 12) {
+                            Text("날짜")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primaryText)
+                                .frame(width: 60, alignment: .leading)
+                            
+                            DatePicker("", selection: $targetDate, displayedComponents: .date)
+                                .datePickerStyle(CompactDatePickerStyle())
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding()
+                }
+                
+                // Update Button
+                Button(action: updateTask) {
+                    Text("할 일 수정")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(title.isEmpty ? Color(hex: "D9D9D9") : Color.mainPoint)
+                        .cornerRadius(12)
+                }
+                .disabled(title.isEmpty)
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+            .background(Color(hex: "F7F5F2"))
+            .navigationTitle("할 일 수정")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("취소") {
+                        dismiss()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("저장") {
+                        updateTask()
+                    }
+                    .disabled(title.isEmpty)
+                }
+            }
+        }
+    }
+    
+    private func updateTask() {
+        var updatedTodo = todo
+        updatedTodo.title = title
+        updatedTodo.description = description
+        updatedTodo.priority = priority
+        updatedTodo.targetDate = targetDate
+        
+        dataManager.updateTodo(updatedTodo)
         dismiss()
     }
 }
@@ -625,15 +816,21 @@ struct HabitTaskCard: View {
                     
                     Spacer()
                     
-                    Text("습관")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.mainPoint)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(
-                            Capsule()
-                                .fill(Color.mainPoint.opacity(0.1))
-                        )
+                    HStack(spacing: 4) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.mainPoint)
+                        
+                        Text("\(habitStreak)")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.mainPoint)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .fill(Color.mainPoint.opacity(0.1))
+                    )
                 }
                 
                 if !habit.description.isEmpty {
@@ -655,6 +852,31 @@ struct HabitTaskCard: View {
         return habit.completedDates.contains { completedDate in
             Calendar.current.isDate(completedDate, inSameDayAs: date)
         }
+    }
+    
+    private var habitStreak: Int {
+        let calendar = Calendar.current
+        let today = Date()
+        var streak = 0
+        var currentDate = today
+        
+        // 오늘부터 과거로 거슬러 올라가면서 연속일수 계산
+        while true {
+            let startOfDay = calendar.startOfDay(for: currentDate)
+            let isCompleted = habit.completedDates.contains { completedDate in
+                calendar.isDate(completedDate, inSameDayAs: startOfDay)
+            }
+            
+            if isCompleted {
+                streak += 1
+                // 하루 전으로 이동
+                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
+            } else {
+                break
+            }
+        }
+        
+        return streak
     }
 }
 
