@@ -87,7 +87,7 @@ struct HabitView: View {
                     }
                     .background(.clear)
                     .padding(.trailing, 20)
-                    .padding(.bottom, 100) // 탭바 위 공간
+                    .padding(.bottom, 20) // 더 하단으로 이동
                 }
             }
             .background(.clear)
