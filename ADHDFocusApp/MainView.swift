@@ -1,5 +1,6 @@
 import SwiftUI
 import Foundation
+import Lottie
 
 struct MainView: View {
     @EnvironmentObject var dataManager: DataManager
@@ -454,8 +455,14 @@ struct MainView: View {
     private func getMonthDates() -> [Date] {
         let calendar = Calendar.current
         let today = selectedDate
-        let monthStart = calendar.dateInterval(of: .month, for: today)?.start ?? Date()
-        let daysInMonth = calendar.range(of: .day, in: .month, for: today)?.count ?? 30
+        let monthInterval = calendar.dateInterval(of: .month, for: today)
+        
+        guard let monthStart = monthInterval?.start else {
+            return []
+        }
+        
+        let daysInMonthRange = calendar.range(of: .day, in: .month, for: today)
+        let daysInMonth = daysInMonthRange?.count ?? 30
         
         var dates: [Date] = []
         
@@ -539,7 +546,7 @@ struct CelebrationView: View {
                 VStack(spacing: 16) {
                     // 체크마크 아이콘
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 50))
+                        .font(.system(size: 25))
                         .foregroundColor(.successColor)
                         .scaleEffect(animationOffset == 0 ? 1.2 : 0.8)
                         .animation(.spring(response: 0.6, dampingFraction: 0.6), value: animationOffset)
@@ -548,28 +555,15 @@ struct CelebrationView: View {
                     VStack(spacing: 6) {
                         Text("축하합니다! 🎉")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.primaryText)
+                            .foregroundColor(Color(hex: "FFFDFA"))
                         
                         Text("오늘의 모든 할 일을 완료했습니다!")
                             .font(.system(size: 14))
-                            .foregroundColor(.secondaryText)
+                            .foregroundColor(Color(hex: "FFFDFA"))
                             .multilineTextAlignment(.center)
                     }
-                    
-                    // 확인 버튼
-                    Button("확인") {
-                        hideCelebration()
-                    }
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 100, height: 36)
-                    .background(Color.mainPoint)
-                    .cornerRadius(18)
                 }
                 .padding(30)
-                .background(Color.cardBackground.opacity(0.85))
-                .cornerRadius(16)
-                .shadow(color: Color.charcoal.opacity(0.2), radius: 20, x: 0, y: 10)
                 .offset(y: animationOffset)
                 .onAppear {
                     withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
@@ -596,22 +590,38 @@ struct CelebrationView: View {
 
 struct AnimationView: View {
     var body: some View {
-        ZStack {
-            ForEach(0..<20, id: \.self) { index in
-                Circle()
-                    .fill(Color.mainPoint)
-                    .frame(width: 8, height: 8)
-                    .offset(x: CGFloat.random(in: -100...100), y: CGFloat.random(in: -100...100))
-                    .opacity(0.7)
-                    .animation(
-                        Animation.easeInOut(duration: 1.0)
-                            .repeatForever(autoreverses: true)
-                            .delay(Double(index) * 0.1),
-                        value: index
-                    )
-            }
+        LottieJSONView()
+            .frame(width: 400, height: 400)
+    }
+}
+
+struct LottieJSONView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView(frame: .zero)
+        let animationView = LottieAnimationView()
+        
+        // JSON 파일에서 애니메이션 로드
+        if let path = Bundle.main.path(forResource: "confetti", ofType: "json"),
+           let animation = LottieAnimation.filepath(path) {
+            animationView.animation = animation
+            animationView.loopMode = .playOnce
+            animationView.play()
         }
-        .frame(width: 200, height: 200)
+        
+        animationView.contentMode = .scaleAspectFit
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(animationView)
+        
+        NSLayoutConstraint.activate([
+            animationView.heightAnchor.constraint(equalTo: view.heightAnchor),
+            animationView.widthAnchor.constraint(equalTo: view.widthAnchor)
+        ])
+        
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // 업데이트가 필요하지 않음
     }
 }
 

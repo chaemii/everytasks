@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C2DDAF1A2E2A0AF5005B2C3C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = C2DDAF192E2A0AF5005B2C3C /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2DDAF1A2E2A0AF5005B2C3C /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +117,7 @@
 			);
 			name = ADHDFocusApp;
 			packageProductDependencies = (
+				C2DDAF192E2A0AF5005B2C3C /* Lottie */,
 			);
 			productName = ADHDFocusApp;
 			productReference = C2DDADDC2E251668005B2C3C /* ADHDFocusApp.app */;
@@ -199,7 +202,7 @@
 			mainGroup = C2DDADD32E251668005B2C3C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C2DDAE352E29CF73005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				C2DDAF182E2A0AF5005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C2DDADDD2E251668005B2C3C /* Products */;
@@ -558,7 +561,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C2DDAE352E29CF73005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+		C2DDAF182E2A0AF5005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -569,6 +572,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C2DDAF192E2A0AF5005B2C3C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2DDAF182E2A0AF5005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C2DDADD42E251668005B2C3C /* Project object */;
