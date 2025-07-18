@@ -476,12 +476,6 @@ struct StatisticsView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.cardBackground)
-                .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
-        )
-        .padding(.horizontal, 20)
     }
     
     private func getCurrentWeekRange() -> String {
@@ -972,11 +966,16 @@ struct StatisticsView: View {
                 }
             }
             .chartXAxis {
-                AxisMarks { _ in
+                AxisMarks { value in
                     AxisGridLine()
                     AxisTick()
                     if selectedPeriod == 1 {
-                        // 월별일 때는 라벨 숨김
+                        // 월별일 때는 주요 일자만 표시
+                        if let dayString = value.as(String.self),
+                           let day = Int(dayString.replacingOccurrences(of: "일", with: "")),
+                           shouldShowDayLabel(day: day) {
+                            AxisValueLabel()
+                        }
                     } else {
                         AxisValueLabel()
                     }
@@ -1012,11 +1011,16 @@ struct StatisticsView: View {
                 }
             }
             .chartXAxis {
-                AxisMarks { _ in
+                AxisMarks { value in
                     AxisGridLine()
                     AxisTick()
                     if selectedPeriod == 1 {
-                        // 월별일 때는 라벨 숨김
+                        // 월별일 때는 주요 일자만 표시
+                        if let dayString = value.as(String.self),
+                           let day = Int(dayString.replacingOccurrences(of: "일", with: "")),
+                           shouldShowDayLabel(day: day) {
+                            AxisValueLabel()
+                        }
                     } else {
                         AxisValueLabel()
                     }
@@ -1051,11 +1055,16 @@ struct StatisticsView: View {
                 }
             }
             .chartXAxis {
-                AxisMarks { _ in
+                AxisMarks { value in
                     AxisGridLine()
                     AxisTick()
                     if selectedPeriod == 1 {
-                        // 월별일 때는 라벨 숨김
+                        // 월별일 때는 주요 일자만 표시
+                        if let dayString = value.as(String.self),
+                           let day = Int(dayString.replacingOccurrences(of: "일", with: "")),
+                           shouldShowDayLabel(day: day) {
+                            AxisValueLabel()
+                        }
                     } else {
                         AxisValueLabel()
                     }
@@ -1073,6 +1082,16 @@ struct StatisticsView: View {
         case 2: return "전체 \(type)"
         default: return "\(type)"
         }
+    }
+    
+    private func shouldShowDayLabel(day: Int) -> Bool {
+        let calendar = Calendar.current
+        let selectedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
+        let daysInMonth = calendar.range(of: .day, in: .month, for: selectedDate)?.count ?? 30
+        
+        // 주요 일자들: 1, 5, 10, 15, 20, 25, 30, 마지막날
+        let importantDays = [1, 5, 10, 15, 20, 25, 30, daysInMonth]
+        return importantDays.contains(day)
     }
 }
 
