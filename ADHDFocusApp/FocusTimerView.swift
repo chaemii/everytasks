@@ -12,6 +12,45 @@ struct FocusTimerView: View {
     @State private var breakMinutes = 5
     @State private var completedSessions = 0
     @State private var animateProgress = false
+    @State private var selectedPreset: TimerPreset = .pomodoro
+    
+    enum TimerPreset: String, CaseIterable {
+        case pomodoro = "포모도로"
+        case ultradeep = "울트라딥"
+        case shortfocus = "숏 포커스"
+        
+        var focusMinutes: Int {
+            switch self {
+            case .pomodoro: return 25
+            case .ultradeep: return 45
+            case .shortfocus: return 15
+            }
+        }
+        
+        var breakMinutes: Int {
+            switch self {
+            case .pomodoro: return 5
+            case .ultradeep: return 15
+            case .shortfocus: return 5
+            }
+        }
+        
+        var color: Color {
+            switch self {
+            case .pomodoro: return Color.subColor3
+            case .ultradeep: return Color(hex: "A4D0B4")
+            case .shortfocus: return Color(hex: "99CFFF")
+            }
+        }
+        
+        var displayName: String {
+            switch self {
+            case .pomodoro: return "포모도로 (25분/5분)"
+            case .ultradeep: return "울트라딥 (45분/15분)"
+            case .shortfocus: return "숏 포커스 (15분/5분)"
+            }
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -21,6 +60,11 @@ struct FocusTimerView: View {
             VStack(spacing: 0) {
                 // Header
                 headerView
+                
+                // Preset Selection (only when timer is not running)
+                if !isTimerRunning {
+                    presetSelectionView
+                }
                 
                 // Timer Display
                 timerDisplay
@@ -46,6 +90,42 @@ struct FocusTimerView: View {
                 breakMinutes: $breakMinutes
             )
         }
+    }
+    
+    // MARK: - Preset Selection View
+    private var presetSelectionView: some View {
+        VStack(spacing: 12) {
+            Text("프리셋 선택")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.secondaryText)
+            
+            HStack(spacing: 8) {
+                ForEach(TimerPreset.allCases, id: \.self) { preset in
+                    Button(action: {
+                        selectedPreset = preset
+                        focusMinutes = preset.focusMinutes
+                        breakMinutes = preset.breakMinutes
+                        timeRemaining = preset.focusMinutes * 60
+                    }) {
+                        Text(preset.rawValue)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(selectedPreset == preset ? .white : preset.color)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(selectedPreset == preset ? preset.color : preset.color.opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(preset.color.opacity(0.3), lineWidth: 1)
+                                    )
+                            )
+                    }
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 20)
     }
     
     // MARK: - Header View
@@ -90,7 +170,7 @@ struct FocusTimerView: View {
                 Circle()
                     .trim(from: 0.0, to: CGFloat(progressValue))
                     .stroke(
-                        isBreakTime ? Color.successColor : Color.mainPoint,
+                        isBreakTime ? Color.successColor : selectedPreset.color,
                         style: StrokeStyle(lineWidth: 8, lineCap: .round)
                     )
                     .frame(width: 280, height: 280)
@@ -111,10 +191,43 @@ struct FocusTimerView: View {
                         .foregroundColor(.secondaryText)
                         .opacity(isTimerRunning ? 1.0 : 0.6)
                     
+                    // Add Time Buttons (only when focusing)
+                    if isTimerRunning && !isBreakTime {
+                        HStack(spacing: 12) {
+                            Button(action: {
+                                timeRemaining += 5 * 60 // Add 5 minutes
+                            }) {
+                                Text("+5분")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(selectedPreset.color.opacity(0.8))
+                                    )
+                            }
+                            
+                            Button(action: {
+                                timeRemaining += 10 * 60 // Add 10 minutes
+                            }) {
+                                Text("+10분")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(selectedPreset.color.opacity(0.8))
+                                    )
+                            }
+                        }
+                    }
+                    
                     // Pulse Effect
                     if isTimerRunning {
                         Circle()
-                            .fill(isBreakTime ? Color.successColor : Color.mainPoint)
+                            .fill(isBreakTime ? Color.successColor : selectedPreset.color)
                             .frame(width: 12, height: 12)
                             .opacity(animateProgress ? 0.3 : 1.0)
                             .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: animateProgress)
@@ -129,7 +242,7 @@ struct FocusTimerView: View {
                     .shadow(color: Color.charcoal.opacity(0.08), radius: 20, x: 0, y: 10)
             )
         }
-        .padding(.vertical, 40)
+        .padding(.vertical, 10)
     }
     
     // MARK: - Control Buttons
@@ -160,8 +273,7 @@ struct FocusTimerView: View {
                     .frame(width: 80, height: 80)
                     .background(
                         Circle()
-                            .fill(isBreakTime ? Color.successColor : Color.mainPoint)
-                            .shadow(color: Color.charcoal.opacity(0.2), radius: 10, x: 0, y: 5)
+                            .fill(isBreakTime ? Color.successColor : selectedPreset.color)
                     )
             }
             .modernButton(backgroundColor: Color.clear, foregroundColor: .white)
@@ -192,58 +304,56 @@ struct FocusTimerView: View {
     private var sessionInfo: some View {
         VStack(spacing: 16) {
             // Session Counter
-            HStack(spacing: 20) {
+            HStack(spacing: 0) {
                 VStack(spacing: 4) {
                     Text("\(completedSessions)")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
                     Text("완료된 세션")
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
-                .frame(minWidth: 80)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.cardBackground)
-                        .shadow(color: Color.charcoal.opacity(0.03), radius: 2, x: 0, y: 1)
-                )
+                .frame(maxWidth: .infinity)
+                
+                // Vertical Divider
+                Rectangle()
+                    .fill(Color.charcoal.opacity(0.1))
+                    .frame(width: 1, height: 40)
                 
                 VStack(spacing: 4) {
                     Text("\(focusMinutes)분")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
                     Text("집중 시간")
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
-                .frame(minWidth: 80)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.cardBackground)
-                        .shadow(color: Color.charcoal.opacity(0.03), radius: 2, x: 0, y: 1)
-                )
+                .frame(maxWidth: .infinity)
+                
+                // Vertical Divider
+                Rectangle()
+                    .fill(Color.charcoal.opacity(0.1))
+                    .frame(width: 1, height: 40)
                 
                 VStack(spacing: 4) {
                     Text("\(breakMinutes)분")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
                     Text("휴식 시간")
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
-                .frame(minWidth: 80)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.cardBackground)
-                        .shadow(color: Color.charcoal.opacity(0.03), radius: 2, x: 0, y: 1)
-                )
+                .frame(maxWidth: .infinity)
             }
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.cardBackground)
+                    .shadow(color: Color.charcoal.opacity(0.03), radius: 2, x: 0, y: 1)
+            )
             
             // Motivation Message
             if isTimerRunning {
@@ -278,6 +388,17 @@ struct FocusTimerView: View {
         timeRemaining = focusMinutes * 60
         isBreakTime = false
         animateProgress = true
+        syncPresetWithTimer()
+    }
+    
+    private func syncPresetWithTimer() {
+        // 현재 타이머 설정에 맞는 프리셋 찾기
+        for preset in TimerPreset.allCases {
+            if preset.focusMinutes == focusMinutes && preset.breakMinutes == breakMinutes {
+                selectedPreset = preset
+                break
+            }
+        }
     }
     
     private func toggleTimer() {
@@ -373,7 +494,7 @@ struct TimerSettingsView: View {
                             Spacer()
                             
                             Text("\(focusMinutes)분")
-                                .font(.system(size: 24, weight: .bold))
+                                .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.primaryText)
                             
                             Spacer()
@@ -414,7 +535,7 @@ struct TimerSettingsView: View {
                             Spacer()
                             
                             Text("\(breakMinutes)분")
-                                .font(.system(size: 24, weight: .bold))
+                                .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.primaryText)
                             
                             Spacer()
@@ -456,7 +577,14 @@ struct TimerSettingsView: View {
                                     }
                                 }
                                 .padding()
-                                .cardStyle()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.subColor3.opacity(0.1))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.subColor3.opacity(0.3), lineWidth: 1)
+                                        )
+                                )
                             }
                             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
                             
@@ -475,7 +603,14 @@ struct TimerSettingsView: View {
                                     }
                                 }
                                 .padding()
-                                .cardStyle()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(hex: "A4D0B4").opacity(0.1))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color(hex: "A4D0B4").opacity(0.3), lineWidth: 1)
+                                        )
+                                )
                             }
                             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
                             
@@ -494,7 +629,14 @@ struct TimerSettingsView: View {
                                     }
                                 }
                                 .padding()
-                                .cardStyle()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(hex: "C1E2FF").opacity(0.1))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color(hex: "C1E2FF").opacity(0.3), lineWidth: 1)
+                                        )
+                                )
                             }
                             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
                         }
