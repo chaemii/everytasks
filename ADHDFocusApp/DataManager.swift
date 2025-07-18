@@ -77,7 +77,12 @@ class DataManager: ObservableObject {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
         
-        if !updatedHabit.completedDates.contains(where: { calendar.isDate($0, inSameDayAs: startOfDay) }) {
+        // 이미 완료된 날짜인지 확인
+        if let existingIndex = updatedHabit.completedDates.firstIndex(where: { calendar.isDate($0, inSameDayAs: startOfDay) }) {
+            // 완료된 날짜라면 제거 (토글)
+            updatedHabit.completedDates.remove(at: existingIndex)
+        } else {
+            // 완료되지 않은 날짜라면 추가
             updatedHabit.completedDates.append(startOfDay)
         }
         
@@ -171,7 +176,7 @@ class DataManager: ObservableObject {
             }
             
             streak += 1
-            currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
+            currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? Date()
         }
         
         return streak

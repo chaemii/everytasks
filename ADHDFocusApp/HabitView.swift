@@ -296,8 +296,8 @@ struct HabitView: View {
     private func getWeekDates() -> [Date] {
         let calendar = Calendar.current
         let today = Date()
-        let adjustedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: today) ?? today
-        let weekStart = calendar.dateInterval(of: .weekOfYear, for: adjustedDate)?.start ?? adjustedDate
+        let adjustedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: today) ?? Date()
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: adjustedDate)?.start ?? Date()
         
         return (0..<7).compactMap { day in
             calendar.date(byAdding: .day, value: day, to: weekStart)
@@ -382,8 +382,22 @@ struct HabitCardView: View {
                         habit: habit
                     )
                 }
+                
+                Spacer()
+                
+                // Three dots menu button
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showingActions.toggle()
+                    }
+                }) {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.secondaryText)
+                        .rotationEffect(.degrees(90))
+                }
+                .modernButton(backgroundColor: Color.clear, foregroundColor: .secondaryText)
             }
-            .padding(.trailing, 40) // 우측 점 버튼과의 여백
         }
         .padding()
         .background(Color(hex: "FFFDFA"))
@@ -419,25 +433,6 @@ struct HabitCardView: View {
                 }
             }
         )
-        .overlay(
-            HStack {
-                Spacer()
-                
-                // Three dots menu button
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        showingActions.toggle()
-                    }
-                }) {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.secondaryText)
-                        .rotationEffect(.degrees(90))
-                }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: .secondaryText)
-            }
-            .padding(.trailing, 16)
-        )
     }
     
     private func isCompletedForDate(_ date: Date) -> Bool {
@@ -457,7 +452,7 @@ struct HabitCardView: View {
                 calendar.isDate(completedDate, inSameDayAs: currentDate)
             }) {
                 streak += 1
-                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
+                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? Date()
             } else {
                 break
             }

@@ -85,13 +85,13 @@ enum TodoPriority: String, CaseIterable, Codable {
     var color: Color {
         switch self {
         case .low:
-            return Color(hex: "FBEACC") ?? .green
+            return Color(hex: "FBEACC")
         case .medium:
-            return Color(hex: "A4D0B4") ?? .blue
+            return Color(hex: "A4D0B4")
         case .high:
-            return Color(hex: "C1E2FF") ?? Color(hex: "F68566")
+            return Color(hex: "C1E2FF")
         case .urgent:
-            return Color(hex: "F68566") ?? .red
+            return Color(hex: "F68566")
         }
     }
 }

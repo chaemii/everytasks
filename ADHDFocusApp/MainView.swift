@@ -10,6 +10,8 @@ struct MainView: View {
     @State private var selectedDate = Date()
     @State private var currentWeekOffset = 0
     @State private var currentMonthOffset = 0
+    @State private var showingCelebration = false
+    @State private var lastProgress = 0.0
     
 
     
@@ -55,6 +57,9 @@ struct MainView: View {
                 EditTaskView(todo: todo)
             }
         }
+        .overlay(
+            CelebrationView(isShowing: $showingCelebration)
+        )
     }
     
     // MARK: - Header View
@@ -141,7 +146,7 @@ struct MainView: View {
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         currentWeekOffset -= 1
-                        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? selectedDate
+                        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
                     }
                 }) {
                     Image(systemName: "chevron.left")
@@ -161,7 +166,7 @@ struct MainView: View {
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         currentWeekOffset += 1
-                        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? selectedDate
+                        selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
                     }
                 }) {
                     Image(systemName: "chevron.right")
@@ -228,7 +233,7 @@ struct MainView: View {
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         currentMonthOffset -= 1
-                        selectedDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? selectedDate
+                        selectedDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
                     }
                 }) {
                     Image(systemName: "chevron.left")
@@ -248,7 +253,7 @@ struct MainView: View {
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         currentMonthOffset += 1
-                        selectedDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? selectedDate
+                        selectedDate = Calendar.current.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
                     }
                 }) {
                     Image(systemName: "chevron.right")
@@ -422,7 +427,7 @@ struct MainView: View {
     private func getWeekDates() -> [Date] {
         let calendar = Calendar.current
         let today = selectedDate
-        let weekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? Date()
         
         return (0..<7).compactMap { day in
             calendar.date(byAdding: .day, value: day, to: weekStart)
@@ -432,7 +437,7 @@ struct MainView: View {
     private func getMonthDates() -> [Date] {
         let calendar = Calendar.current
         let today = selectedDate
-        let monthStart = calendar.dateInterval(of: .month, for: today)?.start ?? today
+        let monthStart = calendar.dateInterval(of: .month, for: today)?.start ?? Date()
         let firstWeekday = calendar.component(.weekday, from: monthStart)
         let daysInMonth = calendar.range(of: .day, in: .month, for: today)?.count ?? 30
         
@@ -483,10 +488,123 @@ struct MainView: View {
     
     private func toggleHabitCompletion(_ habit: Habit, date: Date) {
         dataManager.completeHabit(habit, for: date)
+        checkProgressForCelebration()
     }
     
     private func toggleTodoCompletion(_ todo: Todo) {
         dataManager.toggleTodoCompletion(todo)
+        checkProgressForCelebration()
+    }
+    
+    private func checkProgressForCelebration() {
+        let currentProgress = getTodayProgress()
+        if currentProgress >= 1.0 && lastProgress < 1.0 {
+            showingCelebration = true
+        }
+        lastProgress = currentProgress
+    }
+}
+
+// MARK: - Celebration View
+struct CelebrationView: View {
+    @Binding var isShowing: Bool
+    @State private var animationOffset: CGFloat = 1000
+    @State private var confettiOffset: CGFloat = -100
+    
+    var body: some View {
+        if isShowing {
+            ZStack {
+                // 배경 오버레이
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        hideCelebration()
+                    }
+                
+                // 메인 셀러브레이션 카드
+                VStack(spacing: 16) {
+                    // 체크마크 아이콘
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(.successColor)
+                        .scaleEffect(animationOffset == 0 ? 1.2 : 0.8)
+                        .animation(.spring(response: 0.6, dampingFraction: 0.6), value: animationOffset)
+                    
+                    // 축하 메시지
+                    VStack(spacing: 6) {
+                        Text("축하합니다! 🎉")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.primaryText)
+                        
+                        Text("오늘의 모든 할 일을 완료했습니다!")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondaryText)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    // 확인 버튼
+                    Button("확인") {
+                        hideCelebration()
+                    }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 100, height: 36)
+                    .background(Color.mainPoint)
+                    .cornerRadius(18)
+                }
+                .padding(30)
+                .background(Color.cardBackground.opacity(0.95))
+                .cornerRadius(16)
+                .shadow(color: Color.charcoal.opacity(0.2), radius: 20, x: 0, y: 10)
+                .offset(y: animationOffset)
+                .onAppear {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                        animationOffset = 0
+                    }
+                }
+                
+                // Lottie 컨페티 애니메이션
+                AnimationView()
+                    .frame(width: 200, height: 200)
+                    .offset(y: confettiOffset)
+            }
+            .onAppear {
+                withAnimation(.easeOut(duration: 2.0)) {
+                    confettiOffset = 1000
+                }
+            }
+        }
+    }
+    
+    private func hideCelebration() {
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            animationOffset = 1000
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            isShowing = false
+        }
+    }
+}
+
+struct AnimationView: View {
+    var body: some View {
+        // 임시로 기본 SwiftUI 애니메이션 사용
+        ZStack {
+            ForEach(0..<20, id: \.self) { index in
+                Circle()
+                    .fill(Color.mainPoint)
+                    .frame(width: 8, height: 8)
+                    .offset(x: CGFloat.random(in: -100...100), y: CGFloat.random(in: -100...100))
+                    .opacity(0.7)
+                    .animation(
+                        Animation.easeInOut(duration: 1.0)
+                            .repeatForever(autoreverses: true)
+                            .delay(Double(index) * 0.1),
+                        value: index
+                    )
+            }
+        }
+        .frame(width: 200, height: 200)
     }
 }
 
@@ -790,12 +908,44 @@ struct HabitTaskCard: View {
         return Color(hex: habit.color)
     }
     
+    private var backgroundColor: Color {
+        let trimmedColor = habit.color.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch trimmedColor {
+        case "C1E2FF":
+            return Color(hex: "#E2EEF6")
+        case "A4D0B4":
+            return Color(hex: "#E5EEE8")
+        case "F68566":
+            return Color(hex: "#F9EAE6")
+        case "FBEACC":
+            return Color(hex: "#F7EFE2")
+        case "FF7539":
+            return Color(hex: "#FEF2ED")
+        default:
+            return Color.cardBackground
+        }
+    }
+    
+    private var textColor: Color {
+        return .primaryText
+    }
+    
+    private var checkColor: Color {
+        let trimmedColor = habit.color.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedColor == "FBEACC" {
+            return Color(hex: "#F7D394")
+        }
+        return isCompleted ? habitColor : .secondaryText
+    }
+    
     var body: some View {
         HStack(spacing: 12) {
             Button(action: onToggle) {
                 Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 24))
-                    .foregroundColor(isCompleted ? habitColor : .secondaryText)
+                    .foregroundColor(checkColor)
+                    .scaleEffect(isCompleted ? 1.1 : 1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isCompleted)
             }
             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
             
@@ -803,7 +953,7 @@ struct HabitTaskCard: View {
                 HStack {
                     Text(habit.title)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.primaryText)
+                        .foregroundColor(textColor)
                     
                     Spacer()
                     
@@ -834,7 +984,7 @@ struct HabitTaskCard: View {
             Spacer()
         }
         .padding()
-        .background(habitColor.opacity(0.05))
+        .background(backgroundColor)
         .cornerRadius(16)
         .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
     }
@@ -861,7 +1011,7 @@ struct HabitTaskCard: View {
             if isCompleted {
                 streak += 1
                 // 하루 전으로 이동
-                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
+                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? Date()
             } else {
                 break
             }
@@ -885,6 +1035,8 @@ struct TodoTaskCard: View {
                 Image(systemName: todo.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 24))
                     .foregroundColor(todo.isCompleted ? .successColor : .secondaryText)
+                    .scaleEffect(todo.isCompleted ? 1.1 : 1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: todo.isCompleted)
             }
             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
             
