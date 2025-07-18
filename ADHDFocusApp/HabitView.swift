@@ -8,6 +8,32 @@ struct HabitView: View {
     @State private var editingHabit: Habit?
     @State private var currentWeekOffset = 0
     @State private var currentMonthOffset = 0
+    // 응원 메시지 템플릿 배열
+    private let weeklyMotivationTemplates = [
+        "이번주 %d%% 완료! 조금만 더 힘내세요! 내일이 더 나아질 거예요! 💪",
+        "이번주 %d%% 달성! 꾸준함이 최고의 습관이에요! 🌟",
+        "이번주 %d%% 성공! 작은 진전이 큰 변화를 만들어요! ✨",
+        "이번주 %d%% 완료! 당신의 노력이 빛나고 있어요! 🎯",
+        "이번주 %d%% 달성! 한 걸음씩 나아가고 있어요! 🚀",
+        "이번주 %d%% 성공! 멋진 습관을 만들어가고 있어요! 💎",
+        "이번주 %d%% 완료! 지속력이 당신의 강점이에요! 🔥",
+        "이번주 %d%% 달성! 차근차근 해내고 있어요! 📚",
+        "이번주 %d%% 성공! 집중의 힘을 느껴보세요! ⭐",
+        "이번주 %d%% 완료! 오늘도 멋진 하루 보내세요! 🎉"
+    ]
+    
+    private let monthlyMotivationTemplates = [
+        "이번달 %d%% 완료! 꾸준함이 최고의 습관이에요! 🌟",
+        "이번달 %d%% 달성! 한 달간 정말 수고했어요! 💪",
+        "이번달 %d%% 성공! 지속적인 노력이 빛나고 있어요! ✨",
+        "이번달 %d%% 완료! 당신의 의지력이 대단해요! 🎯",
+        "이번달 %d%% 달성! 작은 습관이 큰 변화를 만들어요! 🚀",
+        "이번달 %d%% 성공! 멋진 성장을 보여주고 있어요! 💎",
+        "이번달 %d%% 완료! 꾸준함의 힘을 느껴보세요! 🔥",
+        "이번달 %d%% 달성! 한 달간 정말 잘했어요! 📚",
+        "이번달 %d%% 성공! 지속력이 당신의 무기예요! ⭐",
+        "이번달 %d%% 완료! 다음 달도 파이팅! 🎉"
+    ]
     
     enum CalendarPeriod: String, CaseIterable {
         case weekly = "주간"
@@ -64,6 +90,7 @@ struct HabitView: View {
                 }
             }
         }
+
         .sheet(isPresented: $showingAddHabit) {
             AddHabitView()
         }
@@ -223,8 +250,8 @@ struct HabitView: View {
                 }
             }.count
             
-            Text(selectedPeriod == .weekly ? "이번주 \(Int(progress * 100))% 완료! 조금만 더 힘내세요! 내일이 더 나아질 거예요! 💪" : "이번달 \(Int(progress * 100))% 완료! 꾸준함이 최고의 습관이에요! 🌟")
-                .font(.caption)
+            Text(getRandomMotivationMessage(progress: progress))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.secondaryText)
                 .multilineTextAlignment(.leading)
                 .padding(.horizontal, 20)
@@ -412,6 +439,20 @@ struct HabitView: View {
             return habit.selectedDayOfMonth == dayOfMonth
         }
     }
+    
+    private func getRandomMotivationMessage(progress: Double) -> String {
+        let progressPercent = Int(progress * 100)
+        
+        if selectedPeriod == .weekly {
+            let template = weeklyMotivationTemplates.randomElement() ?? weeklyMotivationTemplates[0]
+            return String(format: template, progressPercent)
+        } else {
+            let template = monthlyMotivationTemplates.randomElement() ?? monthlyMotivationTemplates[0]
+            return String(format: template, progressPercent)
+        }
+    }
+    
+
     
     private var weekFormatter: DateFormatter {
         let formatter = DateFormatter()

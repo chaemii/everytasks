@@ -12,7 +12,23 @@ struct FocusTimerView: View {
     @State private var breakMinutes = 5
     @State private var completedSessions = 0
     @State private var animateProgress = false
+    @State private var shadowAnimation = false
     @State private var selectedPreset: TimerPreset = .pomodoro
+    @State private var currentMotivationMessage = ""
+    
+    // 동기부여 메시지 배열
+    private let focusMessages = [
+        "집중하고 있어요! 🎯",
+        "조금만 더 힘내세요! 💪",
+        "오늘도 집중하는 시간 보내요! ✨",
+        "한 걸음씩 나아가고 있어요! 🚀",
+        "멋진 집중력을 보여주세요! 🌟",
+        "차근차근 해내고 있어요! 📚",
+        "집중의 힘을 느껴보세요! 🔥",
+        "작은 진전이 큰 성공을 만들어요! 🎉",
+        "지금 이 순간이 중요해요! ⭐",
+        "당신의 집중력이 빛나고 있어요! 💎"
+    ]
     
     enum TimerPreset: String, CaseIterable {
         case pomodoro = "포모도로"
@@ -236,10 +252,37 @@ struct FocusTimerView: View {
             }
             .padding()
             .background(
-                Circle()
-                    .fill(Color.cardBackground)
-                    .frame(width: 320, height: 320)
-                    .shadow(color: Color.charcoal.opacity(0.08), radius: 20, x: 0, y: 10)
+                ZStack {
+                    // 그라데이션 애니메이션 레이어 (집중 중일 때만)
+                    if isTimerRunning && !isBreakTime {
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [
+                                        selectedPreset.color.opacity(0.3),
+                                        selectedPreset.color.opacity(0.1),
+                                        Color.clear
+                                    ]),
+                                    center: .center,
+                                    startRadius: 110 + (shadowAnimation ? 20 : 0),
+                                    endRadius: 180 + (shadowAnimation ? 30 : 0)
+                                )
+                            )
+                            .frame(width: 400, height: 400)
+                            .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: shadowAnimation)
+                    }
+                    
+                    // 메인 원형 배경
+                    Circle()
+                        .fill(Color.cardBackground)
+                        .frame(width: 320, height: 320)
+                        .shadow(
+                            color: Color.charcoal.opacity(0.08),
+                            radius: 20, 
+                            x: 0, 
+                            y: 10
+                        )
+                }
             )
         }
         .padding(.vertical, 10)
@@ -357,14 +400,14 @@ struct FocusTimerView: View {
             
             // Motivation Message
             if isTimerRunning {
-                Text(isBreakTime ? "잠시 휴식을 취하세요 😌" : "집중하고 있어요! 🎯")
+                Text(isBreakTime ? "잠시 휴식을 취하세요 😌" : currentMotivationMessage)
                     .font(.subheadline)
-                    .foregroundColor(isBreakTime ? .successColor : .mainPoint)
+                    .foregroundColor(isBreakTime ? .successColor : getMotivationTextColor())
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(
                         Capsule()
-                            .fill((isBreakTime ? Color.successColor : Color.mainPoint).opacity(0.12))
+                            .fill((isBreakTime ? Color.successColor : getMotivationBackgroundColor()).opacity(0.12))
                     )
             }
         }
@@ -389,6 +432,7 @@ struct FocusTimerView: View {
         isBreakTime = false
         animateProgress = true
         syncPresetWithTimer()
+        updateMotivationMessage()
     }
     
     private func syncPresetWithTimer() {
@@ -398,6 +442,12 @@ struct FocusTimerView: View {
                 selectedPreset = preset
                 break
             }
+        }
+    }
+    
+    private func updateMotivationMessage() {
+        if !isBreakTime && isTimerRunning {
+            currentMotivationMessage = focusMessages.randomElement() ?? "집중하고 있어요! 🎯"
         }
     }
     
@@ -411,9 +461,16 @@ struct FocusTimerView: View {
     
     private func startTimer() {
         isTimerRunning = true
+        animateProgress = true
+        shadowAnimation = true
+        updateMotivationMessage()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if timeRemaining > 0 {
                 timeRemaining -= 1
+                // 30초마다 메시지 변경
+                if timeRemaining % 30 == 0 && !isBreakTime {
+                    updateMotivationMessage()
+                }
             } else {
                 completeSession()
             }
@@ -422,6 +479,8 @@ struct FocusTimerView: View {
     
     private func stopTimer() {
         isTimerRunning = false
+        animateProgress = false
+        shadowAnimation = false
         timer?.invalidate()
         timer = nil
     }
@@ -658,6 +717,31 @@ struct TimerSettingsView: View {
             }
         }
         .preferredColorScheme(.dark)
+    }
+}
+
+// MARK: - Helper Methods for Motivation Message Colors
+extension FocusTimerView {
+    private func getMotivationTextColor() -> Color {
+        switch selectedPreset {
+        case .pomodoro:
+            return selectedPreset.color
+        case .ultradeep:
+            return Color(hex: "2E7D32") // 더 진한 초록색으로 가시성 향상
+        case .shortfocus:
+            return Color(hex: "1565C0") // 더 진한 파란색으로 가시성 향상
+        }
+    }
+    
+    private func getMotivationBackgroundColor() -> Color {
+        switch selectedPreset {
+        case .pomodoro:
+            return selectedPreset.color
+        case .ultradeep:
+            return Color(hex: "4CAF50") // 밝은 초록색 배경
+        case .shortfocus:
+            return Color(hex: "2196F3") // 밝은 파란색 배경
+        }
     }
 }
 
