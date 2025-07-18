@@ -5,6 +5,8 @@ struct StatisticsView: View {
     @EnvironmentObject var dataManager: DataManager
     @State private var selectedPeriod = 0 // 0: 이번 주, 1: 이번 달, 2: 전체
     @State private var selectedTab = 0 // 0: 습관, 1: 집중 시간
+    @State private var currentWeekOffset = 0 // 주간 오프셋 추가
+    @State private var currentMonthOffset = 0 // 월간 오프셋 추가
     
     var body: some View {
         ZStack {
@@ -79,18 +81,28 @@ struct StatisticsView: View {
     // MARK: - Statistics Content
     private var statisticsContent: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 40) { // 20에서 40으로 변경 (두 배)
+                // Week Navigation (이번주 선택시에만 표시)
+                if selectedPeriod == 0 {
+                    weekNavigationView
+                }
+                
+                // Month Navigation (이번달 선택시에만 표시)
+                if selectedPeriod == 1 {
+                    monthNavigationView
+                }
+                
                 // Overall Progress
                 overallProgressView
                 
-                // Todo Statistics
-                todoStatisticsView
+                // Todo Statistics with Chart
+                todoStatisticsWithChartView
                 
-                // Habit Statistics
-                habitStatisticsView
+                // Habit Statistics with Chart
+                habitStatisticsWithChartView
                 
-                // Focus Time Statistics
-                focusTimeStatisticsView
+                // Focus Time Statistics with Chart
+                focusTimeStatisticsWithChartView
             }
             .padding()
         }
@@ -172,141 +184,189 @@ struct StatisticsView: View {
         }
     }
     
-    // MARK: - Habit Statistics View
-    private var habitStatisticsView: some View {
+    // MARK: - Todo Statistics with Chart View
+    private var todoStatisticsWithChartView: some View {
         VStack(spacing: 16) {
-            Text("습관 통계")
-                .font(.headline)
-                .foregroundColor(.primaryText)
-            
-            VStack(spacing: 12) {
-                StatisticRow(
-                    title: "완료된 습관",
-                    value: "\(completedHabitsCount)개",
-                    icon: "checkmark.circle.fill",
-                    color: Color.successColor
-                )
-                
-                StatisticRow(
-                    title: "총 습관",
-                    value: "\(totalHabitsCount)개",
-                    icon: "circle.grid.hex.fill",
-                    color: Color.mainPoint
-                )
-                
-                StatisticRow(
-                    title: "가장 긴 연속 기록",
-                    value: "\(longestStreak)일",
-                    icon: "flame.fill",
-                    color: Color.warningColor
-                )
-                
-                StatisticRow(
-                    title: "완료율",
-                    value: "\(Int(habitCompletionRate * 100))%",
-                    icon: "chart.pie.fill",
-                    color: Color.accentColor
-                )
+            HStack {
+                Text("할 일 통계")
+                    .font(.headline)
+                    .foregroundColor(.primaryText)
+                Spacer()
             }
-            .padding()
-            .cardStyle()
             
-            // 요일별 습관 차트 (이번주 선택시에만 표시)
-            if selectedPeriod == 0 {
-                weeklyHabitChart
-            }
-        }
-    }
-    
-    // MARK: - Focus Time Statistics View
-    private var focusTimeStatisticsView: some View {
-        VStack(spacing: 16) {
-            Text("집중 시간 통계")
-                .font(.headline)
-                .foregroundColor(.primaryText)
-            
-            VStack(spacing: 12) {
-                StatisticRow(
-                    title: "총 집중 시간",
-                    value: "\(totalFocusTime)분",
-                    icon: "timer.circle.fill",
-                    color: Color.mainPoint
-                )
-                
-                StatisticRow(
-                    title: "완료된 세션",
-                    value: "\(completedFocusSessionsCount)개",
-                    icon: "checkmark.circle.fill",
-                    color: Color.successColor
-                )
-                
-                StatisticRow(
-                    title: "평균 세션 길이",
-                    value: "\(averageSessionDuration)분",
-                    icon: "clock.fill",
-                    color: Color.accentColor
-                )
-                
-                StatisticRow(
-                    title: "일일 평균",
-                    value: "\(dailyAverageFocusTime)분",
-                    icon: "calendar.circle.fill",
-                    color: Color.warningColor
-                )
-            }
-            .padding()
-            .cardStyle()
-            
-            // 요일별 집중 시간 차트 (이번주 선택시에만 표시)
-            if selectedPeriod == 0 {
-                weeklyFocusChart
-            }
-        }
-    }
-    
-    // MARK: - Todo Statistics View
-    private var todoStatisticsView: some View {
-        VStack(spacing: 16) {
-            Text("할 일 통계")
-                .font(.headline)
-                .foregroundColor(.primaryText)
-            
-            VStack(spacing: 12) {
-                StatisticRow(
-                    title: "완료된 할 일",
-                    value: "\(completedTodosCount)개",
-                    icon: "checkmark.circle.fill",
-                    color: Color.successColor
-                )
-                
-                StatisticRow(
-                    title: "총 할 일",
-                    value: "\(totalTodosCount)개",
-                    icon: "list.bullet.circle.fill",
-                    color: Color.mainPoint
-                )
-                
-                StatisticRow(
-                    title: "완료율",
-                    value: "\(Int(todoCompletionRate * 100))%",
-                    icon: "chart.pie.fill",
-                    color: Color.accentColor
-                )
-                
-                StatisticRow(
-                    title: "미완료 할 일",
-                    value: "\(incompleteTodosCount)개",
-                    icon: "exclamationmark.circle.fill",
-                    color: Color.warningColor
-                )
-            }
-            .padding()
-            .cardStyle()
-            
-            // 요일별 할일 차트 (이번주 선택시에만 표시)
-            if selectedPeriod == 0 {
+            VStack(spacing: 16) {
+                // Chart first
                 weeklyTodoChart
+                
+                // Simplified statistics
+                HStack(spacing: 20) {
+                    // Completed/Total
+                    VStack(spacing: 4) {
+                        Text("\(completedTodosCount)/\(totalTodosCount)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primaryText)
+                        Text("완료/전체")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                    
+                    Divider()
+                        .frame(height: 30)
+                    
+                    // Completion Rate
+                    VStack(spacing: 4) {
+                        Text("\(Int(todoCompletionRate * 100))%")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.successColor)
+                        Text("완료율")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                    
+                    Divider()
+                        .frame(height: 30)
+                    
+                    // Incomplete
+                    VStack(spacing: 4) {
+                        Text("\(incompleteTodosCount)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.warningColor)
+                        Text("미완료")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                }
+                .padding(.horizontal, 20) // 20으로 증가
+                .padding(.bottom, 20) // 20으로 증가
             }
+            .cardStyle()
+        }
+    }
+    
+    // MARK: - Habit Statistics with Chart View
+    private var habitStatisticsWithChartView: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("습관 통계")
+                    .font(.headline)
+                    .foregroundColor(.primaryText)
+                Spacer()
+            }
+            
+            VStack(spacing: 16) {
+                // Chart first
+                weeklyHabitChart
+                
+                // Simplified statistics
+                HStack(spacing: 20) {
+                    // Completed/Total
+                    VStack(spacing: 4) {
+                        Text("\(completedHabitsCount)/\(totalHabitsCount)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primaryText)
+                        Text("완료/전체")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                    
+                    Divider()
+                        .frame(height: 30)
+                    
+                    // Completion Rate
+                    VStack(spacing: 4) {
+                        Text("\(Int(habitCompletionRate * 100))%")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.successColor)
+                        Text("완료율")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                    
+                    Divider()
+                        .frame(height: 30)
+                    
+                    // Longest Streak
+                    VStack(spacing: 4) {
+                        Text("\(longestStreak)일")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.warningColor)
+                        Text("최고 연속")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                }
+                .padding(.horizontal, 20) // 20으로 증가
+                .padding(.bottom, 20) // 20으로 증가
+            }
+            .cardStyle()
+        }
+    }
+    
+    // MARK: - Focus Time Statistics with Chart View
+    private var focusTimeStatisticsWithChartView: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("집중 시간 통계")
+                    .font(.headline)
+                    .foregroundColor(.primaryText)
+                Spacer()
+            }
+            
+            VStack(spacing: 16) {
+                // Chart first
+                weeklyFocusChart
+                
+                // Simplified statistics
+                HStack(spacing: 20) {
+                    // Total Focus Time
+                    VStack(spacing: 4) {
+                        Text("\(totalFocusTime)분")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primaryText)
+                        Text("총 집중")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                    
+                    Divider()
+                        .frame(height: 30)
+                    
+                    // Completed Sessions
+                    VStack(spacing: 4) {
+                        Text("\(completedFocusSessionsCount)개")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.successColor)
+                        Text("완료 세션")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                    
+                    Divider()
+                        .frame(height: 30)
+                    
+                    // Average Duration
+                    VStack(spacing: 4) {
+                        Text("\(averageSessionDuration)분")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.accentColor)
+                        Text("평균 세션")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                    }
+                }
+                .padding(.horizontal, 20) // 20으로 증가
+                .padding(.bottom, 20) // 20으로 증가
+            }
+            .cardStyle()
         }
     }
     
@@ -342,6 +402,110 @@ struct StatisticsView: View {
         case 2: return "전체"
         default: return ""
         }
+    }
+    
+    // MARK: - Week Navigation for Statistics
+    private var weekNavigationView: some View {
+        HStack {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentWeekOffset -= 1
+                }
+            }) {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(.primaryText)
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            
+            Spacer()
+            
+            Text(getCurrentWeekRange())
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.primaryText)
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentWeekOffset += 1
+                }
+            }) {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.primaryText)
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+    }
+    
+    // MARK: - Month Navigation for Statistics
+    private var monthNavigationView: some View {
+        HStack {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentMonthOffset -= 1
+                }
+            }) {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(.primaryText)
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            
+            Spacer()
+            
+            Text(getCurrentMonthRange())
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.primaryText)
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentMonthOffset += 1
+                }
+            }) {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.primaryText)
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.cardBackground)
+                .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+        .padding(.horizontal, 20)
+    }
+    
+    private func getCurrentWeekRange() -> String {
+        let calendar = Calendar.current
+        let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
+        let weekEnd = calendar.date(byAdding: .day, value: 6, to: weekStart) ?? selectedDate
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M월 d일"
+        
+        return "\(formatter.string(from: weekStart)) - \(formatter.string(from: weekEnd))"
+    }
+    
+    private func getCurrentMonthRange() -> String {
+        let calendar = Calendar.current
+        let selectedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy년 M월"
+        
+        return formatter.string(from: selectedDate)
     }
     
     private func getDateRange() -> (start: Date, end: Date) {
@@ -392,10 +556,11 @@ struct StatisticsView: View {
     private func getWeeklyTodoData() -> [WeeklyTodoData] {
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
         let calendar = Calendar.current
-        let weekStart = calendar.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
         
         return weekdays.enumerated().map { index, weekday in
-            let date = calendar.date(byAdding: .day, value: index, to: weekStart) ?? Date()
+            let date = calendar.date(byAdding: .day, value: index, to: weekStart) ?? selectedDate
             let todosForDay = dataManager.todos.filter { todo in
                 calendar.isDate(todo.targetDate, inSameDayAs: date)
             }
@@ -416,10 +581,11 @@ struct StatisticsView: View {
     private func getWeeklyHabitData() -> [WeeklyHabitData] {
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
         let calendar = Calendar.current
-        let weekStart = calendar.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
         
         return weekdays.enumerated().map { index, weekday in
-            let date = calendar.date(byAdding: .day, value: index, to: weekStart) ?? Date()
+            let date = calendar.date(byAdding: .day, value: index, to: weekStart) ?? selectedDate
             let activeHabits = dataManager.habits.filter { $0.isActive }
             
             var totalCount = 0
@@ -450,10 +616,11 @@ struct StatisticsView: View {
     private func getWeeklyFocusData() -> [WeeklyFocusData] {
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
         let calendar = Calendar.current
-        let weekStart = calendar.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
+        let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
         
         return weekdays.enumerated().map { index, weekday in
-            let date = calendar.date(byAdding: .day, value: index, to: weekStart) ?? Date()
+            let date = calendar.date(byAdding: .day, value: index, to: weekStart) ?? selectedDate
             let sessionsForDay = dataManager.focusSessions.filter { session in
                 session.isCompleted && session.endTime != nil &&
                 calendar.isDate(session.endTime!, inSameDayAs: date)
@@ -467,6 +634,180 @@ struct StatisticsView: View {
             
             return WeeklyFocusData(
                 weekday: weekday,
+                sessionCount: sessionCount,
+                averageDuration: averageDuration
+            )
+        }
+    }
+    
+    // MARK: - Period-based Data Calculation
+    private func getTodoData() -> [WeeklyTodoData] {
+        switch selectedPeriod {
+        case 0: return getWeeklyTodoData()
+        case 1: return getMonthlyTodoData()
+        case 2: return getOverallTodoData()
+        default: return getWeeklyTodoData()
+        }
+    }
+    
+    private func getHabitData() -> [WeeklyHabitData] {
+        switch selectedPeriod {
+        case 0: return getWeeklyHabitData()
+        case 1: return getMonthlyHabitData()
+        case 2: return getOverallHabitData()
+        default: return getWeeklyHabitData()
+        }
+    }
+    
+    private func getFocusData() -> [WeeklyFocusData] {
+        switch selectedPeriod {
+        case 0: return getWeeklyFocusData()
+        case 1: return getMonthlyFocusData()
+        case 2: return getOverallFocusData()
+        default: return getWeeklyFocusData()
+        }
+    }
+    
+    // MARK: - Monthly Data Calculation
+    private func getMonthlyTodoData() -> [WeeklyTodoData] {
+        let calendar = Calendar.current
+        let selectedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
+        let monthStart = calendar.dateInterval(of: .month, for: selectedDate)?.start ?? selectedDate
+        let daysInMonth = calendar.range(of: .day, in: .month, for: selectedDate)?.count ?? 30
+        
+        return (1...daysInMonth).map { day in
+            let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart) ?? selectedDate
+            
+            let todosForDay = dataManager.todos.filter { todo in
+                calendar.isDate(todo.targetDate, inSameDayAs: date)
+            }
+            
+            let totalCount = todosForDay.count
+            let completedCount = todosForDay.filter { $0.isCompleted }.count
+            let completionRate = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
+            
+            return WeeklyTodoData(
+                weekday: "\(day)일",
+                totalCount: totalCount,
+                completedCount: completedCount,
+                completionRate: completionRate
+            )
+        }
+    }
+    
+    private func getMonthlyHabitData() -> [WeeklyHabitData] {
+        let calendar = Calendar.current
+        let selectedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
+        let monthStart = calendar.dateInterval(of: .month, for: selectedDate)?.start ?? selectedDate
+        let daysInMonth = calendar.range(of: .day, in: .month, for: selectedDate)?.count ?? 30
+        
+        return (1...daysInMonth).map { day in
+            let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart) ?? selectedDate
+            let activeHabits = dataManager.habits.filter { $0.isActive }
+            
+            var totalCount = 0
+            var completedCount = 0
+            
+            for habit in activeHabits {
+                if dataManager.isHabitApplicableForDate(habit, date: date) {
+                    totalCount += 1
+                    if habit.completedDates.contains(where: { completedDate in
+                        calendar.isDate(completedDate, inSameDayAs: date)
+                    }) {
+                        completedCount += 1
+                    }
+                }
+            }
+            
+            let completionRate = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
+            
+            return WeeklyHabitData(
+                weekday: "\(day)일",
+                totalCount: totalCount,
+                completedCount: completedCount,
+                completionRate: completionRate
+            )
+        }
+    }
+    
+    private func getMonthlyFocusData() -> [WeeklyFocusData] {
+        let calendar = Calendar.current
+        let selectedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
+        let monthStart = calendar.dateInterval(of: .month, for: selectedDate)?.start ?? selectedDate
+        let daysInMonth = calendar.range(of: .day, in: .month, for: selectedDate)?.count ?? 30
+        
+        return (1...daysInMonth).map { day in
+            let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart) ?? selectedDate
+            
+            let sessionsForDay = dataManager.focusSessions.filter { session in
+                session.isCompleted && session.endTime != nil &&
+                calendar.isDate(session.endTime!, inSameDayAs: date)
+            }
+            
+            let sessionCount = sessionsForDay.count
+            let totalDuration = sessionsForDay.reduce(0) { total, session in
+                total + Int(session.duration / 60)
+            }
+            let averageDuration = sessionCount > 0 ? totalDuration / sessionCount : 0
+            
+            return WeeklyFocusData(
+                weekday: "\(day)일",
+                sessionCount: sessionCount,
+                averageDuration: averageDuration
+            )
+        }
+    }
+    
+    // MARK: - Overall Data Calculation
+    private func getOverallTodoData() -> [WeeklyTodoData] {
+        let categories = ["할일", "습관", "집중"]
+        
+        return categories.enumerated().map { index, category in
+            let todos = dataManager.todos
+            let totalCount = todos.count
+            let completedCount = todos.filter { $0.isCompleted }.count
+            let completionRate = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
+            
+            return WeeklyTodoData(
+                weekday: category,
+                totalCount: totalCount,
+                completedCount: completedCount,
+                completionRate: completionRate
+            )
+        }
+    }
+    
+    private func getOverallHabitData() -> [WeeklyHabitData] {
+        let categories = ["할일", "습관", "집중"]
+        
+        return categories.enumerated().map { index, category in
+            let habits = dataManager.habits.filter { $0.isActive }
+            let totalCount = habits.count
+            let completedCount = habits.filter { !$0.completedDates.isEmpty }.count
+            let completionRate = totalCount > 0 ? Double(completedCount) / Double(totalCount) : 0.0
+            
+            return WeeklyHabitData(
+                weekday: category,
+                totalCount: totalCount,
+                completedCount: completedCount,
+                completionRate: completionRate
+            )
+        }
+    }
+    
+    private func getOverallFocusData() -> [WeeklyFocusData] {
+        let categories = ["할일", "습관", "집중"]
+        
+        return categories.enumerated().map { index, category in
+            let sessions = dataManager.focusSessions.filter { $0.isCompleted }
+            let sessionCount = sessions.count
+            let totalDuration = sessions.reduce(0) { total, session in
+                total + Int(session.duration / 60)
+            }
+            let averageDuration = sessionCount > 0 ? totalDuration / sessionCount : 0
+            
+            return WeeklyFocusData(
+                weekday: category,
                 sessionCount: sessionCount,
                 averageDuration: averageDuration
             )
@@ -607,82 +948,93 @@ struct StatisticsView: View {
     // MARK: - Weekly Charts
     private var weeklyTodoChart: some View {
         VStack(spacing: 12) {
-            Text("요일별 할일 완료율")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.primaryText)
+            Text(chartTitle(for: "할일 완료율"))
+                .font(.caption)
+                .foregroundColor(.secondaryText)
+                .padding(.top, 16)
+                .padding(.horizontal, 16)
             
-            Chart(getWeeklyTodoData()) { data in
+            Chart(getTodoData()) { data in
                 BarMark(
                     x: .value("요일", data.weekday),
-                    y: .value("완료율", data.completionRate * 100)
+                    y: .value("완료율", Int(data.completionRate * 100))
                 )
                 .foregroundStyle(Color.mainPoint.gradient)
                 .cornerRadius(4)
             }
             .frame(height: 200)
+            .chartYScale(domain: 0...100)
             .chartYAxis {
                 AxisMarks(position: .leading) {
                     AxisGridLine()
                     AxisTick()
-                    AxisValueLabel(format: .number.scale(100).suffix("%"))
+                    AxisValueLabel()
                 }
             }
             .chartXAxis {
                 AxisMarks { _ in
                     AxisGridLine()
                     AxisTick()
-                    AxisValueLabel()
+                    if selectedPeriod == 1 {
+                        // 월별일 때는 라벨 숨김
+                    } else {
+                        AxisValueLabel()
+                    }
                 }
             }
+            .padding(.horizontal, 12)
         }
-        .padding()
-        .cardStyle()
     }
     
     private var weeklyHabitChart: some View {
         VStack(spacing: 12) {
-            Text("요일별 습관 완료율")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.primaryText)
+            Text(chartTitle(for: "습관 완료율"))
+                .font(.caption)
+                .foregroundColor(.secondaryText)
+                .padding(.top, 16)
+                .padding(.horizontal, 16)
             
-            Chart(getWeeklyHabitData()) { data in
+            Chart(getHabitData()) { data in
                 BarMark(
                     x: .value("요일", data.weekday),
-                    y: .value("완료율", data.completionRate * 100)
+                    y: .value("완료율", Int(data.completionRate * 100))
                 )
                 .foregroundStyle(Color.successColor.gradient)
                 .cornerRadius(4)
             }
             .frame(height: 200)
+            .chartYScale(domain: 0...100)
             .chartYAxis {
                 AxisMarks(position: .leading) {
                     AxisGridLine()
                     AxisTick()
-                    AxisValueLabel(format: .number.scale(100).suffix("%"))
+                    AxisValueLabel()
                 }
             }
             .chartXAxis {
                 AxisMarks { _ in
                     AxisGridLine()
                     AxisTick()
-                    AxisValueLabel()
+                    if selectedPeriod == 1 {
+                        // 월별일 때는 라벨 숨김
+                    } else {
+                        AxisValueLabel()
+                    }
                 }
             }
+            .padding(.horizontal, 12)
         }
-        .padding()
-        .cardStyle()
     }
     
     private var weeklyFocusChart: some View {
         VStack(spacing: 12) {
-            Text("요일별 집중 세션")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.primaryText)
+            Text(chartTitle(for: "집중 세션"))
+                .font(.caption)
+                .foregroundColor(.secondaryText)
+                .padding(.top, 16)
+                .padding(.horizontal, 16)
             
-            Chart(getWeeklyFocusData()) { data in
+            Chart(getFocusData()) { data in
                 BarMark(
                     x: .value("요일", data.weekday),
                     y: .value("세션 수", data.sessionCount)
@@ -702,44 +1054,29 @@ struct StatisticsView: View {
                 AxisMarks { _ in
                     AxisGridLine()
                     AxisTick()
-                    AxisValueLabel()
+                    if selectedPeriod == 1 {
+                        // 월별일 때는 라벨 숨김
+                    } else {
+                        AxisValueLabel()
+                    }
                 }
             }
+            .padding(.horizontal, 12)
         }
-        .padding()
-        .cardStyle()
+    }
+    
+    // MARK: - Helper Methods
+    private func chartTitle(for type: String) -> String {
+        switch selectedPeriod {
+        case 0: return "요일별 \(type)"
+        case 1: return "월별 \(type)"
+        case 2: return "전체 \(type)"
+        default: return "\(type)"
+        }
     }
 }
 
-// MARK: - Statistic Row
-struct StatisticRow: View {
-    let title: String
-    let value: String
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(color)
-                .frame(width: 24, height: 24)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.secondaryText)
-                
-                Text(value)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.primaryText)
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 4)
-    }
-}
+
 
 #Preview {
     StatisticsView()
