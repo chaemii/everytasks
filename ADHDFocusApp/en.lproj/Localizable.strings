@@ -1,0 +1,309 @@
+// MARK: - Common
+"app_name" = "ADHD Focus";
+"cancel" = "Cancel";
+"save" = "Save";
+"delete" = "Delete";
+"edit" = "Edit";
+"add" = "Add";
+"complete" = "Complete";
+"incomplete" = "Incomplete";
+"total" = "Total";
+"progress" = "Progress";
+"statistics" = "Statistics";
+"settings" = "Settings";
+
+// MARK: - Navigation
+"this_week" = "This Week";
+"this_month" = "This Month";
+"all" = "All";
+"daily" = "Daily";
+"monthly" = "Monthly";
+
+// MARK: - Todo
+"todo" = "Todo";
+"todos" = "Todos";
+"new_todo" = "New Todo";
+"edit_todo" = "Edit Todo";
+"todo_title" = "Title";
+"todo_description" = "Description";
+"todo_priority" = "Priority";
+"todo_date" = "Date";
+"todo_category" = "Category";
+"todo_input_placeholder" = "Enter your todo";
+"todo_description_placeholder" = "Additional description (optional)";
+"todo_completed" = "Completed Todos";
+"todo_incomplete" = "Incomplete Todos";
+"todo_completion_rate" = "Completion Rate";
+
+// MARK: - Priority
+"priority_urgent" = "Urgent";
+"priority_high" = "High";
+"priority_medium" = "Medium";
+"priority_low" = "Low";
+
+// MARK: - Categories
+"category_personal" = "Personal";
+"category_work" = "Work";
+"category_study" = "Study";
+"category_health" = "Health";
+"category_exercise" = "Exercise";
+"category_habit" = "Habit";
+
+// MARK: - Habits
+"habit" = "Habit";
+"habits" = "Habits";
+"new_habit" = "New Habit";
+"edit_habit" = "Edit Habit";
+"habit_title" = "Title";
+"habit_description" = "Description";
+"habit_frequency" = "Frequency";
+"habit_color" = "Color";
+"habit_completed" = "Completed Habits";
+"habit_total" = "Total Habits";
+"habit_longest_streak" = "Longest Streak";
+"habit_completion_rate" = "Completion Rate";
+
+// MARK: - Frequency
+"frequency_daily" = "Daily";
+"frequency_weekly" = "Weekly";
+"frequency_monthly" = "Monthly";
+
+// MARK: - Focus Timer
+"focus_timer" = "Focus Timer";
+"focus_session" = "Focus Session";
+"focus_sessions" = "Focus Sessions";
+"focus_time" = "Focus Time";
+"focus_total_time" = "Total Focus Time";
+"focus_completed_sessions" = "Completed Sessions";
+"focus_average_duration" = "Average Session Duration";
+"focus_daily_average" = "Daily Average";
+"focus_start" = "Start";
+"focus_pause" = "Pause";
+"focus_resume" = "Resume";
+"focus_stop" = "Stop";
+"focus_complete" = "Complete";
+"break_time" = "Break Time";
+"preset_selection" = "Preset Selection";
+"pomodoro" = "Pomodoro";
+"ultradeep" = "Ultra Deep";
+"shortfocus" = "Short Focus";
+
+// MARK: - Statistics
+"statistics_title" = "Statistics";
+"statistics_subtitle" = "Check your growth";
+"statistics_overall_progress" = "Overall Progress";
+"statistics_todo_statistics" = "Todo Statistics";
+"statistics_habit_statistics" = "Habit Statistics";
+"statistics_focus_statistics" = "Focus Time Statistics";
+"statistics_completed" = "Completed";
+"statistics_completion_rate" = "Completion Rate";
+"statistics_longest_streak" = "Longest Streak";
+"statistics_total_focus" = "Total Focus";
+"statistics_completed_sessions" = "Completed Sessions";
+"statistics_average_session" = "Average Session";
+
+// MARK: - Charts
+"chart_weekly_todo_completion" = "Weekly Todo Completion Rate";
+"chart_weekly_habit_completion" = "Weekly Habit Completion Rate";
+"chart_weekly_focus_sessions" = "Weekly Focus Sessions";
+"chart_monthly_todo_completion" = "Monthly Todo Completion Rate";
+"chart_monthly_habit_completion" = "Monthly Habit Completion Rate";
+"chart_monthly_focus_sessions" = "Monthly Focus Sessions";
+"chart_overall_todo_completion" = "Overall Todo Completion Rate";
+"chart_overall_habit_completion" = "Overall Habit Completion Rate";
+"chart_overall_focus_sessions" = "Overall Focus Sessions";
+
+// MARK: - Weekdays
+"weekday_sun" = "Sun";
+"weekday_mon" = "Mon";
+"weekday_tue" = "Tue";
+"weekday_wed" = "Wed";
+"weekday_thu" = "Thu";
+"weekday_fri" = "Fri";
+"weekday_sat" = "Sat";
+
+// MARK: - Months
+"month_jan" = "Jan";
+"month_feb" = "Feb";
+"month_mar" = "Mar";
+"month_apr" = "Apr";
+"month_may" = "May";
+"month_jun" = "Jun";
+"month_jul" = "Jul";
+"month_aug" = "Aug";
+"month_sep" = "Sep";
+"month_oct" = "Oct";
+"month_nov" = "Nov";
+"month_dec" = "Dec";
+
+// MARK: - Messages
+"message_celebration" = "Congratulations! 🎉";
+"message_all_todos_completed" = "You've completed all today's tasks!";
+"message_no_todos_selected_date" = "No todos for the selected date";
+"message_add_new_todo" = "Add a new todo!";
+"message_today_progress" = "Today's Progress %@%%";
+
+// MARK: - Units
+"unit_minutes" = "min";
+"unit_days" = "days";
+"unit_count" = "";
+"unit_percent" = "%%";
+
+// MARK: - Empty States
+"empty_state_no_todos" = "No todos";
+"empty_state_no_habits" = "No habits";
+"empty_state_no_focus_sessions" = "No focus sessions";
+
+// MARK: - Date Formats
+"date_format_month_day" = "M월 d일";
+"date_format_month_day_short" = "M/d";
+"date_format_year_month" = "yyyy년 M월";
+"date_format_year_month_short" = "MMM yyyy";
+
+// MARK: - Weekdays (3 letters)
+"weekday_sun_short" = "Sun";
+"weekday_mon_short" = "Mon";
+"weekday_tue_short" = "Tue";
+"weekday_wed_short" = "Wed";
+"weekday_thu_short" = "Thu";
+"weekday_fri_short" = "Fri";
+"weekday_sat_short" = "Sat";
+
+// MARK: - Add/Edit Forms
+"add_new_todo" = "Add New Todo";
+"add_new_habit" = "Add New Habit";
+"edit_todo" = "Edit Todo";
+"edit_habit" = "Edit Habit";
+"form_title" = "Title";
+"form_description" = "Description";
+"form_priority" = "Priority";
+"form_category" = "Category";
+"form_frequency" = "Frequency";
+"form_color" = "Color";
+"form_target_date" = "Target Date";
+"form_weekdays" = "Select Weekdays";
+"form_day_of_month" = "Day of Month";
+
+// MARK: - Focus Timer Additional
+"focus_in_progress" = "Focusing";
+"add_5_minutes" = "+5min";
+"add_10_minutes" = "+10min";
+"focus_settings" = "Focus Timer Settings";
+"focus_duration" = "Focus Duration";
+"break_duration" = "Break Duration";
+"focus_duration_minutes" = "Focus Duration (minutes)";
+"break_duration_minutes" = "Break Duration (minutes)";
+
+// MARK: - Motivation Messages
+"motivation_weekly_1" = "This week %d%% complete! Keep going! Tomorrow will be better! 💪";
+"motivation_weekly_2" = "This week %d%% achieved! Consistency is the best habit! 🌟";
+"motivation_weekly_3" = "This week %d%% success! Small progress creates big change! ✨";
+"motivation_weekly_4" = "This week %d%% complete! Your effort is shining! 🎯";
+"motivation_weekly_5" = "This week %d%% achieved! Moving forward step by step! 🚀";
+"motivation_monthly_1" = "This month %d%% complete! Consistency is the best habit! 🌟";
+"motivation_monthly_2" = "This month %d%% achieved! Great work this month! 💪";
+"motivation_monthly_3" = "This month %d%% success! Your continuous effort is shining! ✨";
+"motivation_monthly_4" = "This month %d%% complete! Your willpower is amazing! 🎯";
+"motivation_monthly_5" = "This month %d%% achieved! Small habits create big change! 🚀";
+
+// MARK: - Focus Messages
+"focus_message_1" = "Stay focused! 🎯";
+"focus_message_2" = "Keep going! 💪";
+"focus_message_3" = "Have a focused time today! ✨";
+"focus_message_4" = "Moving forward step by step! 🚀";
+"focus_message_5" = "Show your amazing focus! 🌟";
+"focus_message_6" = "Take it step by step! 📚";
+"focus_message_7" = "Feel the power of focus! 🔥";
+"focus_message_8" = "Small progress leads to big success! 🎉";
+"focus_message_9" = "This moment is important! ⭐";
+"focus_message_10" = "Your focus is shining! 💎";
+
+// MARK: - Additional UI Elements
+"break_time" = "Break Time";
+"focus_completed_sessions" = "Completed Sessions";
+"preset_selection" = "Presets";
+"pomodoro" = "Pomodoro";
+"ultradeep" = "Ultra Deep";
+"shortfocus" = "Short Focus";
+"save" = "Done";
+
+// MARK: - Form Placeholders
+"form_title_placeholder" = "Enter todo title";
+"form_description_placeholder" = "Enter todo description";
+"form_priority_placeholder" = "Select priority";
+"form_category_placeholder" = "Select category";
+"form_frequency_placeholder" = "Select frequency";
+"form_color_placeholder" = "Select color";
+"form_target_date_placeholder" = "Select target date";
+"form_weekdays_placeholder" = "Select weekdays";
+"form_day_of_month_placeholder" = "Select day of month";
+
+// MARK: - Form Buttons
+"add_todo_button" = "Add New Todo";
+"add_habit_button" = "Add Habit";
+"edit_todo_button" = "Edit Todo";
+"edit_habit_button" = "Edit Habit";
+
+// MARK: - Edit Form Labels
+"edit_form_title" = "Title";
+"edit_form_description" = "Description";
+"edit_form_priority" = "Priority";
+"edit_form_date" = "Date";
+"edit_form_frequency" = "Frequency";
+"edit_form_weekdays" = "Weekdays";
+"edit_form_day_of_month" = "Day";
+"edit_form_color" = "Color";
+
+// MARK: - Edit Form Placeholders
+"edit_form_title_placeholder" = "Enter your todo";
+"edit_form_description_placeholder" = "Additional description (optional)";
+"edit_form_habit_title_placeholder" = "Enter your habit";
+"edit_form_day_picker_placeholder" = "Select day";
+
+// MARK: - Statistics Titles
+"daily_todo_completion_rate" = "Daily Todo Completion Rate";
+"daily_habit_completion_rate" = "Daily Habit Completion Rate";
+"daily_focus_sessions" = "Daily Focus Sessions";
+"incomplete_todos" = "Incomplete Todos";
+"completed_todos" = "Completed Todos";
+"total_todos" = "Total Todos";
+"incomplete_habits" = "Incomplete Habits";
+"completed_habits" = "Completed Habits";
+"total_habits" = "Total Habits";
+"focus_sessions_count" = "Focus Sessions";
+"focus_duration_total" = "Total Focus Time";
+"focus_duration_average" = "Average Focus Time";
+"focus_sessions_completed" = "Completed";
+"focus_sessions_incomplete" = "Incomplete";
+
+// MARK: - Time Units
+"minutes_short" = "분";
+"days_short" = "일";
+"minutes_short_en" = "m";
+"days_short_en" = "d";
+
+// MARK: - Statistics
+"statistics_todo_statistics" = "Todo Statistics";
+"statistics_habit_statistics" = "Habit Statistics";
+"statistics_focus_statistics" = "Focus Time Statistics";
+"completion_rate" = "Completion Rate";
+"longest_streak" = "Longest Streak";
+
+// MARK: - Form Elements
+"form_title" = "Title";
+"form_description" = "Description";
+"form_priority" = "Priority";
+"form_target_date" = "Date";
+"form_frequency" = "Frequency";
+"form_color" = "Color";
+"form_weekdays" = "Weekdays";
+
+// MARK: - Form Placeholders
+"form_title_placeholder" = "Enter todo title";
+"form_description_placeholder" = "Additional description (optional)";
+"form_habit_title_placeholder" = "Enter habit title";
+
+// MARK: - Additional UI Elements
+"cancel" = "Cancel";
+"add_new_todo" = "New Todo";
+"edit_todo" = "Edit Todo"; 

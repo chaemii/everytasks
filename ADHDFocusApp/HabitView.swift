@@ -9,35 +9,38 @@ struct HabitView: View {
     @State private var currentWeekOffset = 0
     @State private var currentMonthOffset = 0
     // 응원 메시지 템플릿 배열
-    private let weeklyMotivationTemplates = [
-        "이번주 %d%% 완료! 조금만 더 힘내세요! 내일이 더 나아질 거예요! 💪",
-        "이번주 %d%% 달성! 꾸준함이 최고의 습관이에요! 🌟",
-        "이번주 %d%% 성공! 작은 진전이 큰 변화를 만들어요! ✨",
-        "이번주 %d%% 완료! 당신의 노력이 빛나고 있어요! 🎯",
-        "이번주 %d%% 달성! 한 걸음씩 나아가고 있어요! 🚀",
-        "이번주 %d%% 성공! 멋진 습관을 만들어가고 있어요! 💎",
-        "이번주 %d%% 완료! 지속력이 당신의 강점이에요! 🔥",
-        "이번주 %d%% 달성! 차근차근 해내고 있어요! 📚",
-        "이번주 %d%% 성공! 집중의 힘을 느껴보세요! ⭐",
-        "이번주 %d%% 완료! 오늘도 멋진 하루 보내세요! 🎉"
-    ]
+    private var weeklyMotivationTemplates: [String] {
+        return [
+            "motivation_weekly_1".localized,
+            "motivation_weekly_2".localized,
+            "motivation_weekly_3".localized,
+            "motivation_weekly_4".localized,
+            "motivation_weekly_5".localized
+        ]
+    }
     
-    private let monthlyMotivationTemplates = [
-        "이번달 %d%% 완료! 꾸준함이 최고의 습관이에요! 🌟",
-        "이번달 %d%% 달성! 한 달간 정말 수고했어요! 💪",
-        "이번달 %d%% 성공! 지속적인 노력이 빛나고 있어요! ✨",
-        "이번달 %d%% 완료! 당신의 의지력이 대단해요! 🎯",
-        "이번달 %d%% 달성! 작은 습관이 큰 변화를 만들어요! 🚀",
-        "이번달 %d%% 성공! 멋진 성장을 보여주고 있어요! 💎",
-        "이번달 %d%% 완료! 꾸준함의 힘을 느껴보세요! 🔥",
-        "이번달 %d%% 달성! 한 달간 정말 잘했어요! 📚",
-        "이번달 %d%% 성공! 지속력이 당신의 무기예요! ⭐",
-        "이번달 %d%% 완료! 다음 달도 파이팅! 🎉"
-    ]
+    private var monthlyMotivationTemplates: [String] {
+        return [
+            "motivation_monthly_1".localized,
+            "motivation_monthly_2".localized,
+            "motivation_monthly_3".localized,
+            "motivation_monthly_4".localized,
+            "motivation_monthly_5".localized
+        ]
+    }
     
     enum CalendarPeriod: String, CaseIterable {
-        case weekly = "주간"
-        case monthly = "월간"
+        case weekly = "weekly"
+        case monthly = "monthly"
+        
+        var localizedString: String {
+            switch self {
+            case .weekly:
+                return "frequency_weekly".localized
+            case .monthly:
+                return "frequency_monthly".localized
+            }
+        }
     }
     
     var body: some View {
@@ -105,7 +108,7 @@ struct HabitView: View {
     private var headerView: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("습관 관리")
+                Text("habits".localized)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primaryText)
@@ -115,7 +118,7 @@ struct HabitView: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 let progress = getWeeklyProgress()
-                Text("이번주 진행률 \(Int(progress * 100))%")
+                Text("message_today_progress".localized(with: "\(Int(progress * 100))"))
                     .font(.caption)
                     .foregroundColor(.secondaryText)
                     .padding(.horizontal, 12)
@@ -139,7 +142,7 @@ struct HabitView: View {
                         selectedPeriod = period
                     }
                 }) {
-                    Text(period.rawValue)
+                    Text(period.localizedString)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(selectedPeriod == period ? .white : .secondaryText)
                         .frame(maxWidth: .infinity)
@@ -456,16 +459,29 @@ struct HabitView: View {
     
     private var weekFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "M월 d일"
+        formatter.locale = Locale.current
+        formatter.dateFormat = Locale.current.identifier.hasPrefix("ko") ? "M월 d일" : "M/d"
         return formatter
     }
     
     private var monthFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 M월"
+        formatter.locale = Locale.current
+        formatter.dateFormat = Locale.current.identifier.hasPrefix("ko") ? "yyyy년 M월" : "MMM yyyy"
         return formatter
+    }
+    
+    func getShortWeekday(_ weekday: Int) -> String {
+        let weekdays = [
+            "weekday_sun_short".localized,
+            "weekday_mon_short".localized,
+            "weekday_tue_short".localized,
+            "weekday_wed_short".localized,
+            "weekday_thu_short".localized,
+            "weekday_fri_short".localized,
+            "weekday_sat_short".localized
+        ]
+        return weekdays[weekday]
     }
 }
 
@@ -479,7 +495,17 @@ struct HabitCardView: View {
     
     @State private var showingActions = false
     
-    private let days = ["일", "월", "화", "수", "목", "금", "토"]
+    private var days: [String] {
+        return [
+            "weekday_sun_short".localized,
+            "weekday_mon_short".localized,
+            "weekday_tue_short".localized,
+            "weekday_wed_short".localized,
+            "weekday_thu_short".localized,
+            "weekday_fri_short".localized,
+            "weekday_sat_short".localized
+        ]
+    }
     
     private var habitBackgroundColor: Color {
         return Color(hex: "FFFDFA")
@@ -904,12 +930,12 @@ struct AddHabitView: View {
                     VStack(spacing: 20) {
                         // Title Input
                         HStack(spacing: 12) {
-                            Text("제목")
+                            Text("form_title".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("습관을 입력하세요", text: $title)
+                            TextField("form_habit_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
                                 .background(Color(hex: "FFFDFA"))
@@ -918,12 +944,12 @@ struct AddHabitView: View {
                         
                         // Description Input
                         HStack(alignment: .top, spacing: 12) {
-                            Text("설명")
+                            Text("form_description".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("추가 설명 (선택사항)", text: $description, axis: .vertical)
+                            TextField("form_description_placeholder".localized, text: $description, axis: .vertical)
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
@@ -933,7 +959,7 @@ struct AddHabitView: View {
                         
                         // Frequency Selection
                         HStack(spacing: 12) {
-                            Text("반복")
+                            Text("form_frequency".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -969,7 +995,7 @@ struct AddHabitView: View {
                         // Weekly Selection
                         if frequency == .weekly {
                             HStack(spacing: 12) {
-                                Text("요일")
+                                Text("form_weekdays".localized)
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primaryText)
                                     .frame(width: 60, alignment: .leading)
@@ -1022,7 +1048,7 @@ struct AddHabitView: View {
                         
                         // Color Selection
                         HStack(spacing: 12) {
-                            Text("컬러")
+                            Text("form_color".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -1054,7 +1080,7 @@ struct AddHabitView: View {
                 
                 // Add Button
                 Button(action: addHabit) {
-                    Text("습관 추가")
+                    Text("add_habit_button".localized)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -1067,17 +1093,17 @@ struct AddHabitView: View {
                 .padding(.bottom)
             }
             .background(Color(hex: "F7F5F2"))
-            .navigationTitle("새 습관")
+            .navigationTitle("add_new_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("저장") {
+                    Button("save".localized) {
                         addHabit()
                     }
                     .disabled(title.isEmpty)
@@ -1122,7 +1148,7 @@ struct EditHabitView: View {
         ADHDTheme.subColor3
     ]
     
-    private let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+    private let weekdays = ["weekday_sun_short".localized, "weekday_mon_short".localized, "weekday_tue_short".localized, "weekday_wed_short".localized, "weekday_thu_short".localized, "weekday_fri_short".localized, "weekday_sat_short".localized]
     private let monthDays = Array(1...31)
     
     init(habit: Habit) {
@@ -1142,12 +1168,12 @@ struct EditHabitView: View {
                     VStack(spacing: 20) {
                         // Title Input
                         HStack(spacing: 12) {
-                            Text("제목")
+                            Text("edit_form_title".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("습관을 입력하세요", text: $title)
+                            TextField("edit_form_habit_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
                                 .background(Color(hex: "FFFDFA"))
@@ -1156,12 +1182,12 @@ struct EditHabitView: View {
                         
                         // Description Input
                         HStack(alignment: .top, spacing: 12) {
-                            Text("설명")
+                            Text("edit_form_description".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("추가 설명 (선택사항)", text: $description, axis: .vertical)
+                            TextField("edit_form_description_placeholder".localized, text: $description, axis: .vertical)
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
@@ -1171,7 +1197,7 @@ struct EditHabitView: View {
                         
                         // Frequency Selection
                         HStack(spacing: 12) {
-                            Text("반복")
+                            Text("edit_form_frequency".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -1207,7 +1233,7 @@ struct EditHabitView: View {
                         // Weekly Selection
                         if frequency == .weekly {
                             HStack(spacing: 12) {
-                                Text("요일")
+                                Text("edit_form_weekdays".localized)
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primaryText)
                                     .frame(width: 60, alignment: .leading)
@@ -1243,14 +1269,14 @@ struct EditHabitView: View {
                         // Monthly Selection
                         if frequency == .monthly {
                             HStack(spacing: 12) {
-                                Text("일자")
+                                Text("edit_form_day_of_month".localized)
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primaryText)
                                     .frame(width: 60, alignment: .leading)
                                 
-                                Picker("일자 선택", selection: $selectedDayOfMonth) {
+                                Picker("edit_form_day_picker_placeholder".localized, selection: $selectedDayOfMonth) {
                                     ForEach(monthDays, id: \.self) { day in
-                                        Text("\(day)일").tag(day)
+                                        Text("\(day)\(Locale.current.language.languageCode?.identifier == "ko" ? "일" : "")").tag(day)
                                     }
                                 }
                                 .pickerStyle(WheelPickerStyle())
@@ -1260,7 +1286,7 @@ struct EditHabitView: View {
                         
                         // Color Selection
                         HStack(spacing: 12) {
-                            Text("컬러")
+                            Text("edit_form_color".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -1292,7 +1318,7 @@ struct EditHabitView: View {
                 
                 // Update Button
                 Button(action: updateHabit) {
-                    Text("습관 수정")
+                    Text("edit_habit_button".localized)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -1305,17 +1331,17 @@ struct EditHabitView: View {
                 .padding(.bottom)
             }
             .background(Color(hex: "F7F5F2"))
-            .navigationTitle("습관 수정")
+            .navigationTitle("edit_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("저장") {
+                    Button("save".localized) {
                         updateHabit()
                     }
                     .disabled(title.isEmpty)

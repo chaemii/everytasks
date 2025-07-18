@@ -26,12 +26,19 @@ struct Task: Identifiable, Codable {
 
 // MARK: - Task Priority
 enum TaskPriority: String, CaseIterable, Codable {
-    case low = "낮음"
-    case normal = "보통"
-    case high = "높음"
+    case low = "low"
+    case normal = "medium"
+    case high = "high"
     
     var displayText: String {
-        return self.rawValue
+        switch self {
+        case .low:
+            return "priority_low".localized
+        case .normal:
+            return "priority_medium".localized
+        case .high:
+            return "priority_high".localized
+        }
     }
     
     var color: Color {
@@ -73,13 +80,22 @@ struct Todo: Identifiable, Codable {
 
 // MARK: - Todo Priority
 enum TodoPriority: String, CaseIterable, Codable {
-    case low = "낮음"
-    case medium = "보통"
-    case high = "높음"
-    case urgent = "긴급"
+    case low = "low"
+    case medium = "medium"
+    case high = "high"
+    case urgent = "urgent"
     
     var displayName: String {
-        return self.rawValue
+        switch self {
+        case .low:
+            return "priority_low".localized
+        case .medium:
+            return "priority_medium".localized
+        case .high:
+            return "priority_high".localized
+        case .urgent:
+            return "priority_urgent".localized
+        }
     }
     
     var color: Color {
@@ -98,14 +114,25 @@ enum TodoPriority: String, CaseIterable, Codable {
 
 // MARK: - Todo Category
 enum TodoCategory: String, CaseIterable, Codable {
-    case personal = "개인"
-    case work = "업무"
-    case study = "학습"
-    case health = "건강"
-    case habit = "습관"
+    case personal = "personal"
+    case work = "work"
+    case study = "study"
+    case health = "health"
+    case habit = "habit"
     
     var displayName: String {
-        return self.rawValue
+        switch self {
+        case .personal:
+            return "category_personal".localized
+        case .work:
+            return "category_work".localized
+        case .study:
+            return "category_study".localized
+        case .health:
+            return "category_health".localized
+        case .habit:
+            return "category_habit".localized
+        }
     }
     
     var icon: String {
@@ -155,14 +182,25 @@ struct Habit: Identifiable, Codable {
 
 // MARK: - Habit Category
 enum HabitCategory: String, CaseIterable, Codable {
-    case health = "건강"
-    case study = "학습"
-    case personal = "개인"
-    case work = "업무"
-    case exercise = "운동"
+    case health = "health"
+    case study = "study"
+    case personal = "personal"
+    case work = "work"
+    case exercise = "exercise"
     
     var displayText: String {
-        return self.rawValue
+        switch self {
+        case .health:
+            return "category_health".localized
+        case .study:
+            return "category_study".localized
+        case .personal:
+            return "category_personal".localized
+        case .work:
+            return "category_work".localized
+        case .exercise:
+            return "category_exercise".localized
+        }
     }
     
     var icon: String {
@@ -183,12 +221,19 @@ enum HabitCategory: String, CaseIterable, Codable {
 
 // MARK: - Habit Frequency
 enum HabitFrequency: String, CaseIterable, Codable {
-    case daily = "매일"
-    case weekly = "매주"
-    case monthly = "매월"
+    case daily = "daily"
+    case weekly = "weekly"
+    case monthly = "monthly"
     
     var displayName: String {
-        return self.rawValue
+        switch self {
+        case .daily:
+            return "frequency_daily".localized
+        case .weekly:
+            return "frequency_weekly".localized
+        case .monthly:
+            return "frequency_monthly".localized
+        }
     }
     
     var requiresSelection: Bool {

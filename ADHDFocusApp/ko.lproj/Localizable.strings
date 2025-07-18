@@ -1,0 +1,309 @@
+// MARK: - Common
+"app_name" = "ADHD 포커스";
+"cancel" = "취소";
+"save" = "저장";
+"delete" = "삭제";
+"edit" = "수정";
+"add" = "추가";
+"complete" = "완료";
+"incomplete" = "미완료";
+"total" = "전체";
+"progress" = "진행률";
+"statistics" = "통계";
+"settings" = "설정";
+
+// MARK: - Navigation
+"this_week" = "이번 주";
+"this_month" = "이번 달";
+"all" = "전체";
+"daily" = "일간";
+"monthly" = "월간";
+
+// MARK: - Todo
+"todo" = "할 일";
+"todos" = "할 일";
+"new_todo" = "새 할 일";
+"edit_todo" = "할 일 수정";
+"todo_title" = "제목";
+"todo_description" = "설명";
+"todo_priority" = "우선순위";
+"todo_date" = "날짜";
+"todo_category" = "카테고리";
+"todo_input_placeholder" = "할 일을 입력하세요";
+"todo_description_placeholder" = "추가 설명 (선택사항)";
+"todo_completed" = "완료된 할 일";
+"todo_incomplete" = "미완료 할 일";
+"todo_completion_rate" = "완료율";
+
+// MARK: - Priority
+"priority_urgent" = "긴급";
+"priority_high" = "높음";
+"priority_medium" = "보통";
+"priority_low" = "낮음";
+
+// MARK: - Categories
+"category_personal" = "개인";
+"category_work" = "업무";
+"category_study" = "학습";
+"category_health" = "건강";
+"category_exercise" = "운동";
+"category_habit" = "습관";
+
+// MARK: - Habits
+"habit" = "습관";
+"habits" = "습관";
+"new_habit" = "새 습관";
+"edit_habit" = "습관 수정";
+"habit_title" = "제목";
+"habit_description" = "설명";
+"habit_frequency" = "빈도";
+"habit_color" = "색상";
+"habit_completed" = "완료된 습관";
+"habit_total" = "총 습관";
+"habit_longest_streak" = "가장 긴 연속 기록";
+"habit_completion_rate" = "완료율";
+
+// MARK: - Frequency
+"frequency_daily" = "매일";
+"frequency_weekly" = "주간";
+"frequency_monthly" = "월간";
+
+// MARK: - Focus Timer
+"focus_timer" = "집중 타이머";
+"focus_session" = "집중 세션";
+"focus_sessions" = "집중 세션";
+"focus_time" = "집중 시간";
+"focus_total_time" = "총 집중 시간";
+"focus_completed_sessions" = "완료된 세션";
+"focus_average_duration" = "평균 세션 길이";
+"focus_daily_average" = "일일 평균";
+"focus_start" = "시작";
+"focus_pause" = "일시정지";
+"focus_resume" = "재개";
+"focus_stop" = "중지";
+"focus_complete" = "완료";
+"break_time" = "휴식 시간";
+"preset_selection" = "프리셋 선택";
+"pomodoro" = "포모도로";
+"ultradeep" = "울트라딥";
+"shortfocus" = "숏 포커스";
+
+// MARK: - Statistics
+"statistics_title" = "통계";
+"statistics_subtitle" = "나의 성장을 확인해보세요";
+"statistics_overall_progress" = "전체 진행률";
+"statistics_todo_statistics" = "할 일 통계";
+"statistics_habit_statistics" = "습관 통계";
+"statistics_focus_statistics" = "집중 시간 통계";
+"statistics_completed" = "완료";
+"statistics_completion_rate" = "완료율";
+"statistics_longest_streak" = "최고 연속";
+"statistics_total_focus" = "총 집중";
+"statistics_completed_sessions" = "완료 세션";
+"statistics_average_session" = "평균 세션";
+
+// MARK: - Charts
+"chart_weekly_todo_completion" = "요일별 할일 완료율";
+"chart_weekly_habit_completion" = "요일별 습관 완료율";
+"chart_weekly_focus_sessions" = "요일별 집중 세션";
+"chart_monthly_todo_completion" = "월별 할일 완료율";
+"chart_monthly_habit_completion" = "월별 습관 완료율";
+"chart_monthly_focus_sessions" = "월별 집중 세션";
+"chart_overall_todo_completion" = "전체 할일 완료율";
+"chart_overall_habit_completion" = "전체 습관 완료율";
+"chart_overall_focus_sessions" = "전체 집중 세션";
+
+// MARK: - Weekdays
+"weekday_sun" = "일";
+"weekday_mon" = "월";
+"weekday_tue" = "화";
+"weekday_wed" = "수";
+"weekday_thu" = "목";
+"weekday_fri" = "금";
+"weekday_sat" = "토";
+
+// MARK: - Months
+"month_jan" = "1월";
+"month_feb" = "2월";
+"month_mar" = "3월";
+"month_apr" = "4월";
+"month_may" = "5월";
+"month_jun" = "6월";
+"month_jul" = "7월";
+"month_aug" = "8월";
+"month_sep" = "9월";
+"month_oct" = "10월";
+"month_nov" = "11월";
+"month_dec" = "12월";
+
+// MARK: - Messages
+"message_celebration" = "축하합니다! 🎉";
+"message_all_todos_completed" = "오늘의 모든 할 일을 완료했습니다!";
+"message_no_todos_selected_date" = "선택된 날짜에 할 일이 없습니다";
+"message_add_new_todo" = "새로운 할 일을 추가해보세요!";
+"message_today_progress" = "오늘의 진행률 %@%%";
+
+// MARK: - Units
+"unit_minutes" = "분";
+"unit_days" = "일";
+"unit_count" = "개";
+"unit_percent" = "%%";
+
+// MARK: - Empty States
+"empty_state_no_todos" = "할 일이 없습니다";
+"empty_state_no_habits" = "습관이 없습니다";
+"empty_state_no_focus_sessions" = "집중 세션이 없습니다";
+
+// MARK: - Date Formats
+"date_format_month_day" = "M월 d일";
+"date_format_month_day_short" = "M/d";
+"date_format_year_month" = "yyyy년 M월";
+"date_format_year_month_short" = "MMM yyyy";
+
+// MARK: - Weekdays (3 letters)
+"weekday_sun_short" = "일";
+"weekday_mon_short" = "월";
+"weekday_tue_short" = "화";
+"weekday_wed_short" = "수";
+"weekday_thu_short" = "목";
+"weekday_fri_short" = "금";
+"weekday_sat_short" = "토";
+
+// MARK: - Add/Edit Forms
+"add_new_todo" = "새 할 일 추가";
+"add_new_habit" = "새 습관 추가";
+"edit_todo" = "할 일 수정";
+"edit_habit" = "습관 수정";
+"form_title" = "제목";
+"form_description" = "설명";
+"form_priority" = "우선순위";
+"form_category" = "카테고리";
+"form_frequency" = "빈도";
+"form_color" = "색상";
+"form_target_date" = "목표 날짜";
+"form_weekdays" = "요일 선택";
+"form_day_of_month" = "월 중 일자";
+
+// MARK: - Focus Timer Additional
+"focus_in_progress" = "집중 중";
+"add_5_minutes" = "+5분";
+"add_10_minutes" = "+10분";
+"focus_settings" = "집중 타이머 설정";
+"focus_duration" = "집중 시간";
+"break_duration" = "휴식 시간";
+"focus_duration_minutes" = "집중 시간 (분)";
+"break_duration_minutes" = "휴식 시간 (분)";
+
+// MARK: - Motivation Messages
+"motivation_weekly_1" = "이번주 %d%% 완료! 조금만 더 힘내세요! 내일이 더 나아질 거예요! 💪";
+"motivation_weekly_2" = "이번주 %d%% 달성! 꾸준함이 최고의 습관이에요! 🌟";
+"motivation_weekly_3" = "이번주 %d%% 성공! 작은 진전이 큰 변화를 만들어요! ✨";
+"motivation_weekly_4" = "이번주 %d%% 완료! 당신의 노력이 빛나고 있어요! 🎯";
+"motivation_weekly_5" = "이번주 %d%% 달성! 한 걸음씩 나아가고 있어요! 🚀";
+"motivation_monthly_1" = "이번달 %d%% 완료! 꾸준함이 최고의 습관이에요! 🌟";
+"motivation_monthly_2" = "이번달 %d%% 달성! 한 달간 정말 수고했어요! 💪";
+"motivation_monthly_3" = "이번달 %d%% 성공! 지속적인 노력이 빛나고 있어요! ✨";
+"motivation_monthly_4" = "이번달 %d%% 완료! 당신의 의지력이 대단해요! 🎯";
+"motivation_monthly_5" = "이번달 %d%% 달성! 작은 습관이 큰 변화를 만들어요! 🚀";
+
+// MARK: - Focus Messages
+"focus_message_1" = "집중하고 있어요! 🎯";
+"focus_message_2" = "조금만 더 힘내세요! 💪";
+"focus_message_3" = "오늘도 집중하는 시간 보내요! ✨";
+"focus_message_4" = "한 걸음씩 나아가고 있어요! 🚀";
+"focus_message_5" = "멋진 집중력을 보여주세요! 🌟";
+"focus_message_6" = "차근차근 해내고 있어요! 📚";
+"focus_message_7" = "집중의 힘을 느껴보세요! 🔥";
+"focus_message_8" = "작은 진전이 큰 성공을 만들어요! 🎉";
+"focus_message_9" = "지금 이 순간이 중요해요! ⭐";
+"focus_message_10" = "당신의 집중력이 빛나고 있어요! 💎";
+
+// MARK: - Additional UI Elements
+"break_time" = "휴식 중";
+"focus_completed_sessions" = "완료된 세션";
+"preset_selection" = "프리셋";
+"pomodoro" = "포모도로";
+"ultradeep" = "울트라딥";
+"shortfocus" = "숏 포커스";
+"save" = "완료";
+
+// MARK: - Form Placeholders
+"form_title_placeholder" = "할 일 제목을 입력하세요";
+"form_description_placeholder" = "할 일에 대한 설명을 입력하세요";
+"form_priority_placeholder" = "우선순위를 선택하세요";
+"form_category_placeholder" = "카테고리를 선택하세요";
+"form_frequency_placeholder" = "빈도를 선택하세요";
+"form_color_placeholder" = "색상을 선택하세요";
+"form_target_date_placeholder" = "목표 날짜를 선택하세요";
+"form_weekdays_placeholder" = "요일을 선택하세요";
+"form_day_of_month_placeholder" = "월 중 일자를 선택하세요";
+
+// MARK: - Form Buttons
+"add_todo_button" = "새 할 일 추가";
+"add_habit_button" = "습관 추가";
+"edit_todo_button" = "할 일 수정";
+"edit_habit_button" = "습관 수정";
+
+// MARK: - Edit Form Labels
+"edit_form_title" = "제목";
+"edit_form_description" = "설명";
+"edit_form_priority" = "우선순위";
+"edit_form_date" = "날짜";
+"edit_form_frequency" = "반복";
+"edit_form_weekdays" = "요일";
+"edit_form_day_of_month" = "일자";
+"edit_form_color" = "컬러";
+
+// MARK: - Edit Form Placeholders
+"edit_form_title_placeholder" = "할 일을 입력하세요";
+"edit_form_description_placeholder" = "추가 설명 (선택사항)";
+"edit_form_habit_title_placeholder" = "습관을 입력하세요";
+"edit_form_day_picker_placeholder" = "일자 선택";
+
+// MARK: - Statistics Titles
+"daily_todo_completion_rate" = "요일별 할 일 완료율";
+"daily_habit_completion_rate" = "요일별 습관 완료율";
+"daily_focus_sessions" = "요일별 집중 세션";
+"incomplete_todos" = "미완료 할 일";
+"completed_todos" = "완료된 할 일";
+"total_todos" = "전체 할 일";
+"incomplete_habits" = "미완료 습관";
+"completed_habits" = "완료된 습관";
+"total_habits" = "전체 습관";
+"focus_sessions_count" = "집중 세션 수";
+"focus_duration_total" = "총 집중 시간";
+"focus_duration_average" = "평균 집중 시간";
+"focus_sessions_completed" = "완료된 세션";
+"focus_sessions_incomplete" = "미완료 세션";
+
+// MARK: - Time Units
+"minutes_short" = "분";
+"days_short" = "일";
+"minutes_short_en" = "m";
+"days_short_en" = "d";
+
+// MARK: - Statistics
+"statistics_todo_statistics" = "할 일 통계";
+"statistics_habit_statistics" = "습관 통계";
+"statistics_focus_statistics" = "집중 시간 통계";
+"completion_rate" = "완료율";
+"longest_streak" = "최고 연속";
+
+// MARK: - Form Elements
+"form_title" = "제목";
+"form_description" = "설명";
+"form_priority" = "우선순위";
+"form_target_date" = "날짜";
+"form_frequency" = "반복";
+"form_color" = "색상";
+"form_weekdays" = "요일";
+
+// MARK: - Form Placeholders
+"form_title_placeholder" = "할 일을 입력하세요";
+"form_description_placeholder" = "추가 설명 (선택사항)";
+"form_habit_title_placeholder" = "습관을 입력하세요";
+
+// MARK: - Additional UI Elements
+"cancel" = "취소";
+"add_new_todo" = "새 할 일";
+"edit_todo" = "할 일 수정"; 

@@ -11,10 +11,12 @@ class DataManager: ObservableObject {
     private let habitsKey = "habits"
     private let focusSessionsKey = "focusSessions"
     private let statisticsKey = "statistics"
+    private let dataVersionKey = "dataVersion"
+    private let currentDataVersion = "1.0"
     
     init() {
         loadData()
-        setupSampleData()
+        setupSampleDataIfNeeded()
     }
     
     // MARK: - Todo Management
@@ -182,68 +184,98 @@ class DataManager: ObservableObject {
         return streak
     }
     
-    // MARK: - Data Persistence
+    // MARK: - Data Persistence with Version Control
     private func saveData() {
-        if let encoded = try? JSONEncoder().encode(todos) {
-            UserDefaults.standard.set(encoded, forKey: todosKey)
-        }
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         
-        if let encoded = try? JSONEncoder().encode(habits) {
-            UserDefaults.standard.set(encoded, forKey: habitsKey)
-        }
-        
-        if let encoded = try? JSONEncoder().encode(focusSessions) {
-            UserDefaults.standard.set(encoded, forKey: focusSessionsKey)
-        }
-        
-        if let encoded = try? JSONEncoder().encode(statistics) {
-            UserDefaults.standard.set(encoded, forKey: statisticsKey)
+        do {
+            let todosData = try encoder.encode(todos)
+            UserDefaults.standard.set(todosData, forKey: todosKey)
+            
+            let habitsData = try encoder.encode(habits)
+            UserDefaults.standard.set(habitsData, forKey: habitsKey)
+            
+            let focusSessionsData = try encoder.encode(focusSessions)
+            UserDefaults.standard.set(focusSessionsData, forKey: focusSessionsKey)
+            
+            let statisticsData = try encoder.encode(statistics)
+            UserDefaults.standard.set(statisticsData, forKey: statisticsKey)
+            
+            // Save data version for future migrations
+            UserDefaults.standard.set(currentDataVersion, forKey: dataVersionKey)
+            
+            // Force UserDefaults to save immediately
+            UserDefaults.standard.synchronize()
+            
+        } catch {
+            print("Error saving data: \(error)")
         }
     }
     
     private func loadData() {
-        if let data = UserDefaults.standard.data(forKey: todosKey),
-           let decoded = try? JSONDecoder().decode([Todo].self, from: data) {
-            todos = decoded
-        }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
         
-        if let data = UserDefaults.standard.data(forKey: habitsKey),
-           let decoded = try? JSONDecoder().decode([Habit].self, from: data) {
-            habits = decoded
-        }
-        
-        if let data = UserDefaults.standard.data(forKey: focusSessionsKey),
-           let decoded = try? JSONDecoder().decode([FocusSession].self, from: data) {
-            focusSessions = decoded
-        }
-        
-        if let data = UserDefaults.standard.data(forKey: statisticsKey),
-           let decoded = try? JSONDecoder().decode(Statistics.self, from: data) {
-            statistics = decoded
+        do {
+            if let todosData = UserDefaults.standard.data(forKey: todosKey) {
+                todos = try decoder.decode([Todo].self, from: todosData)
+            }
+            
+            if let habitsData = UserDefaults.standard.data(forKey: habitsKey) {
+                habits = try decoder.decode([Habit].self, from: habitsData)
+            }
+            
+            if let focusSessionsData = UserDefaults.standard.data(forKey: focusSessionsKey) {
+                focusSessions = try decoder.decode([FocusSession].self, from: focusSessionsData)
+            }
+            
+            if let statisticsData = UserDefaults.standard.data(forKey: statisticsKey) {
+                statistics = try decoder.decode(Statistics.self, from: statisticsData)
+            }
+            
+        } catch {
+            print("Error loading data: \(error)")
+            // If loading fails, reset to empty state
+            todos = []
+            habits = []
+            focusSessions = []
+            statistics = Statistics()
         }
     }
     
-    // MARK: - Sample Data
-    private func setupSampleData() {
-        // 기존 데이터가 있으면 샘플 데이터로 교체 (테스트용)
-        // guard todos.isEmpty && habits.isEmpty else { return }
+    // MARK: - Data Migration
+    private func migrateDataIfNeeded() {
+        let savedVersion = UserDefaults.standard.string(forKey: dataVersionKey) ?? "0.0"
+        
+        if savedVersion != currentDataVersion {
+            // Perform data migration here if needed
+            // For now, just update the version
+            UserDefaults.standard.set(currentDataVersion, forKey: dataVersionKey)
+        }
+    }
+    
+    // MARK: - Sample Data (only if no data exists)
+    private func setupSampleDataIfNeeded() {
+        // Only add sample data if no data exists
+        guard todos.isEmpty && habits.isEmpty else { return }
         
         // Add sample todos
         let sampleTodos = [
-            Todo(title: "물마시기", description: "하루 8잔 마시기", priority: .medium, category: .habit),
-            Todo(title: "운동하기", description: "30분 걷기", priority: .high, category: .health),
-            Todo(title: "매일 블로그", description: "3개 쓰기", priority: .medium, category: .personal),
-            Todo(title: "카레 요리하기", description: "맛있겠당", priority: .high, category: .personal),
-            Todo(title: "독서하기", description: "30분 독서", priority: .low, category: .study),
-            Todo(title: "명상하기", description: "10분 명상", priority: .medium, category: .health)
+            Todo(title: "물마시기".localized, description: "하루 8잔 마시기".localized, priority: .medium, category: .habit),
+            Todo(title: "운동하기".localized, description: "30분 걷기".localized, priority: .high, category: .health),
+            Todo(title: "매일 블로그".localized, description: "3개 쓰기".localized, priority: .medium, category: .personal),
+            Todo(title: "카레 요리하기".localized, description: "맛있겠당".localized, priority: .high, category: .personal),
+            Todo(title: "독서하기".localized, description: "30분 독서".localized, priority: .low, category: .study),
+            Todo(title: "명상하기".localized, description: "10분 명상".localized, priority: .medium, category: .health)
         ]
         
         // Add sample habits
         let sampleHabits = [
-            Habit(title: "야", description: "테스트 습관", category: .health, color: "F68566"),
-            Habit(title: "물마시기", description: "하루 8잔 마시기", category: .health, color: "C1E2FF"),
-            Habit(title: "운동하기", description: "30분 걷기", category: .exercise, color: "A4D0B4"),
-            Habit(title: "독서하기", description: "30분 독서", category: .study, color: "FBEACC")
+            Habit(title: "야".localized, description: "테스트 습관".localized, category: .health, color: "F68566"),
+            Habit(title: "물마시기".localized, description: "하루 8잔 마시기".localized, category: .health, color: "C1E2FF"),
+            Habit(title: "운동하기".localized, description: "30분 걷기".localized, category: .exercise, color: "A4D0B4"),
+            Habit(title: "독서하기".localized, description: "30분 독서".localized, category: .study, color: "FBEACC")
         ]
         
         todos = sampleTodos
@@ -274,4 +306,56 @@ class DataManager: ObservableObject {
         let completedCount = dayTodos.filter { $0.isCompleted }.count
         return Double(completedCount) / Double(dayTodos.count)
     }
+    
+    // MARK: - Data Backup and Restore
+    func exportData() -> Data? {
+        let exportData = ExportData(
+            todos: todos,
+            habits: habits,
+            focusSessions: focusSessions,
+            statistics: statistics,
+            version: currentDataVersion,
+            exportDate: Date()
+        )
+        
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .prettyPrinted
+        
+        return try? encoder.encode(exportData)
+    }
+    
+    func importData(_ data: Data) -> Bool {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
+        guard let importData = try? decoder.decode(ExportData.self, from: data) else {
+            return false
+        }
+        
+        // Validate data version compatibility
+        guard importData.version == currentDataVersion else {
+            return false
+        }
+        
+        todos = importData.todos
+        habits = importData.habits
+        focusSessions = importData.focusSessions
+        statistics = importData.statistics
+        
+        saveData()
+        updateStatistics()
+        
+        return true
+    }
+}
+
+// MARK: - Export Data Structure
+struct ExportData: Codable {
+    let todos: [Todo]
+    let habits: [Habit]
+    let focusSessions: [FocusSession]
+    let statistics: Statistics
+    let version: String
+    let exportDate: Date
 } 

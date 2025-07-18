@@ -17,8 +17,17 @@ struct MainView: View {
 
     
     enum CalendarPeriod: String, CaseIterable {
-        case daily = "일간"
-        case monthly = "월간"
+        case daily = "daily"
+        case monthly = "monthly"
+        
+        var localizedString: String {
+            switch self {
+            case .daily:
+                return "daily".localized
+            case .monthly:
+                return "monthly".localized
+            }
+        }
     }
     
     var body: some View {
@@ -73,7 +82,7 @@ struct MainView: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 let progress = getTodayProgress()
-                Text("오늘의 진행률 \(Int(progress * 100))%")
+                Text("message_today_progress".localized(with: "\(Int(progress * 100))"))
                     .font(.caption)
                     .foregroundColor(.secondaryText)
                     .padding(.horizontal, 12)
@@ -97,7 +106,7 @@ struct MainView: View {
                         selectedPeriod = period
                     }
                 }) {
-                    Text(period.rawValue)
+                    Text(period.localizedString)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(selectedPeriod == period ? .white : .secondaryText)
                         .frame(maxWidth: .infinity)
@@ -187,7 +196,7 @@ struct MainView: View {
                         }
                     }) {
                         VStack(spacing: 4) {
-                            Text(weekdayFormatter.string(from: date))
+                            Text(getShortWeekday(Calendar.current.component(.weekday, from: date) - 1))
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.secondaryText)
                             
@@ -264,8 +273,8 @@ struct MainView: View {
             // Calendar Grid
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 8) {
                 // Weekday headers
-                ForEach(["일", "월", "화", "수", "목", "금", "토"], id: \.self) { day in
-                    Text(day)
+                ForEach(0..<7, id: \.self) { index in
+                                        Text(getShortWeekday(index))
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.secondaryText)
                         .frame(height: 30)
@@ -342,7 +351,7 @@ struct MainView: View {
         VStack(spacing: 16) { // 8에서 16으로 다시 늘림
             // Header
             HStack {
-                Text("\(weekFormatter.string(from: selectedDate)) 할 일")
+                Text("\(weekFormatter.string(from: selectedDate)) \("todos".localized)")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.primaryText)
                 
@@ -642,12 +651,12 @@ struct AddTaskView: View {
                     VStack(spacing: 20) {
                         // Title Input
                         HStack(spacing: 12) {
-                            Text("제목")
+                            Text("form_title".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("할 일을 입력하세요", text: $title)
+                            TextField("form_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
                                 .background(Color(hex: "FFFDFA"))
@@ -656,12 +665,12 @@ struct AddTaskView: View {
                         
                         // Description Input
                         HStack(alignment: .top, spacing: 12) {
-                            Text("설명")
+                            Text("form_description".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("추가 설명 (선택사항)", text: $description, axis: .vertical)
+                            TextField("form_description_placeholder".localized, text: $description, axis: .vertical)
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
@@ -671,7 +680,7 @@ struct AddTaskView: View {
                         
                         // Priority Selection
                         HStack(spacing: 12) {
-                            Text("우선순위")
+                            Text("form_priority".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -702,7 +711,7 @@ struct AddTaskView: View {
                         
                         // Date Selection
                         HStack(spacing: 12) {
-                            Text("날짜")
+                            Text("form_target_date".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -718,7 +727,7 @@ struct AddTaskView: View {
                 
                 // Add Button
                 Button(action: addTask) {
-                    Text("새 할 일 추가")
+                    Text("add_todo_button".localized)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -731,17 +740,17 @@ struct AddTaskView: View {
                 .padding(.bottom)
             }
             .background(Color(hex: "F7F5F2"))
-            .navigationTitle("새 할 일")
+            .navigationTitle("add_new_todo".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("저장") {
+                    Button("save".localized) {
                         addTask()
                     }
                     .disabled(title.isEmpty)
@@ -790,12 +799,12 @@ struct EditTaskView: View {
                     VStack(spacing: 20) {
                         // Title Input
                         HStack(spacing: 12) {
-                            Text("제목")
+                            Text("edit_form_title".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("할 일을 입력하세요", text: $title)
+                            TextField("edit_form_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
                                 .background(Color(hex: "FFFDFA"))
@@ -804,12 +813,12 @@ struct EditTaskView: View {
                         
                         // Description Input
                         HStack(alignment: .top, spacing: 12) {
-                            Text("설명")
+                            Text("edit_form_description".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("추가 설명 (선택사항)", text: $description, axis: .vertical)
+                            TextField("edit_form_description_placeholder".localized, text: $description, axis: .vertical)
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
@@ -819,7 +828,7 @@ struct EditTaskView: View {
                         
                         // Priority Selection
                         HStack(spacing: 12) {
-                            Text("우선순위")
+                            Text("edit_form_priority".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -850,7 +859,7 @@ struct EditTaskView: View {
                         
                         // Date Selection
                         HStack(spacing: 12) {
-                            Text("날짜")
+                            Text("edit_form_date".localized)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
@@ -866,7 +875,7 @@ struct EditTaskView: View {
                 
                 // Update Button
                 Button(action: updateTask) {
-                    Text("할 일 수정")
+                    Text("edit_todo_button".localized)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -879,17 +888,17 @@ struct EditTaskView: View {
                 .padding(.bottom)
             }
             .background(Color(hex: "F7F5F2"))
-            .navigationTitle("할 일 수정")
+            .navigationTitle("edit_todo".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("저장") {
+                    Button("save".localized) {
                         updateTask()
                     }
                     .disabled(title.isEmpty)
@@ -1153,22 +1162,35 @@ struct TodoTaskCard: View {
 extension MainView {
     var weekFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "M월 d일"
+        formatter.locale = Locale.current
+        formatter.dateFormat = Locale.current.identifier.hasPrefix("ko") ? "M월 d일" : "M/d"
         return formatter
     }
     
     var monthFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "MM.yyyy"
+        formatter.locale = Locale.current
+        formatter.dateFormat = Locale.current.identifier.hasPrefix("ko") ? "yyyy년 M월" : "MMM yyyy"
         return formatter
     }
     
     var weekdayFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.locale = Locale.current
         formatter.dateFormat = "E"
         return formatter
+    }
+    
+    func getShortWeekday(_ weekday: Int) -> String {
+        let weekdays = [
+            "weekday_sun_short".localized,
+            "weekday_mon_short".localized,
+            "weekday_tue_short".localized,
+            "weekday_wed_short".localized,
+            "weekday_thu_short".localized,
+            "weekday_fri_short".localized,
+            "weekday_sat_short".localized
+        ]
+        return weekdays[weekday]
     }
 } 

@@ -17,23 +17,25 @@ struct FocusTimerView: View {
     @State private var currentMotivationMessage = ""
     
     // 동기부여 메시지 배열
-    private let focusMessages = [
-        "집중하고 있어요! 🎯",
-        "조금만 더 힘내세요! 💪",
-        "오늘도 집중하는 시간 보내요! ✨",
-        "한 걸음씩 나아가고 있어요! 🚀",
-        "멋진 집중력을 보여주세요! 🌟",
-        "차근차근 해내고 있어요! 📚",
-        "집중의 힘을 느껴보세요! 🔥",
-        "작은 진전이 큰 성공을 만들어요! 🎉",
-        "지금 이 순간이 중요해요! ⭐",
-        "당신의 집중력이 빛나고 있어요! 💎"
-    ]
+    private var focusMessages: [String] {
+        return [
+            "focus_message_1".localized,
+            "focus_message_2".localized,
+            "focus_message_3".localized,
+            "focus_message_4".localized,
+            "focus_message_5".localized,
+            "focus_message_6".localized,
+            "focus_message_7".localized,
+            "focus_message_8".localized,
+            "focus_message_9".localized,
+            "focus_message_10".localized
+        ]
+    }
     
     enum TimerPreset: String, CaseIterable {
-        case pomodoro = "포모도로"
-        case ultradeep = "울트라딥"
-        case shortfocus = "숏 포커스"
+        case pomodoro = "pomodoro"
+        case ultradeep = "ultradeep"
+        case shortfocus = "shortfocus"
         
         var focusMinutes: Int {
             switch self {
@@ -61,9 +63,9 @@ struct FocusTimerView: View {
         
         var displayName: String {
             switch self {
-            case .pomodoro: return "포모도로 (25분/5분)"
-            case .ultradeep: return "울트라딥 (45분/15분)"
-            case .shortfocus: return "숏 포커스 (15분/5분)"
+            case .pomodoro: return "pomodoro".localized + " (25분/5분)"
+            case .ultradeep: return "ultradeep".localized + " (45분/15분)"
+            case .shortfocus: return "shortfocus".localized + " (15분/5분)"
             }
         }
     }
@@ -111,7 +113,7 @@ struct FocusTimerView: View {
     // MARK: - Preset Selection View
     private var presetSelectionView: some View {
         VStack(spacing: 12) {
-            Text("프리셋 선택")
+            Text("preset_selection".localized)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.secondaryText)
             
@@ -123,7 +125,7 @@ struct FocusTimerView: View {
                         breakMinutes = preset.breakMinutes
                         timeRemaining = preset.focusMinutes * 60
                     }) {
-                        Text(preset.rawValue)
+                        Text(preset.rawValue.localized)
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(selectedPreset == preset ? .white : preset.color)
                             .padding(.horizontal, 12)
@@ -148,12 +150,12 @@ struct FocusTimerView: View {
     private var headerView: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("집중 타이머")
+                Text("focus_timer".localized)
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.primaryText)
                 
-                Text(isBreakTime ? "휴식 시간" : "집중 시간")
+                Text(isBreakTime ? "break_time".localized : "focus_time".localized)
                     .font(.caption)
                     .foregroundColor(.secondaryText)
             }
@@ -163,7 +165,7 @@ struct FocusTimerView: View {
             Button(action: {
                 showingSettings = true
             }) {
-                Image(systemName: "gear")
+                Image(systemName: "slider.horizontal.3")
                     .font(.title2)
                     .foregroundColor(.primaryText)
             }
@@ -202,7 +204,7 @@ struct FocusTimerView: View {
                         .monospacedDigit()
                     
                     // Status Text
-                    Text(isBreakTime ? "휴식 중" : "집중 중")
+                    Text(isBreakTime ? "break_time".localized : "focus_in_progress".localized)
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.secondaryText)
                         .opacity(isTimerRunning ? 1.0 : 0.6)
@@ -213,7 +215,7 @@ struct FocusTimerView: View {
                             Button(action: {
                                 timeRemaining += 5 * 60 // Add 5 minutes
                             }) {
-                                Text("+5분")
+                                Text("add_5_minutes".localized)
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 8)
@@ -227,7 +229,7 @@ struct FocusTimerView: View {
                             Button(action: {
                                 timeRemaining += 10 * 60 // Add 10 minutes
                             }) {
-                                Text("+10분")
+                                Text("add_10_minutes".localized)
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 8)
@@ -349,11 +351,11 @@ struct FocusTimerView: View {
             // Session Counter
             HStack(spacing: 0) {
                 VStack(spacing: 4) {
-                    Text("\(completedSessions)")
+                    Text("Completed") // 기존 Completed Sessions에서 변경
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
-                    Text("완료된 세션")
+                    Text("focus_completed_sessions".localized)
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -365,11 +367,11 @@ struct FocusTimerView: View {
                     .frame(width: 1, height: 40)
                 
                 VStack(spacing: 4) {
-                    Text("\(focusMinutes)분")
+                    Text("\(focusMinutes)m")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
-                    Text("집중 시간")
+                    Text("focus_duration".localized)
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -381,11 +383,11 @@ struct FocusTimerView: View {
                     .frame(width: 1, height: 40)
                 
                 VStack(spacing: 4) {
-                    Text("\(breakMinutes)분")
+                    Text("\(breakMinutes)m")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
-                    Text("휴식 시간")
+                    Text("break_duration".localized)
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -534,7 +536,7 @@ struct TimerSettingsView: View {
                 VStack(spacing: 24) {
                     // Focus Time Setting
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("집중 시간")
+                        Text("focus_duration".localized)
                             .font(.headline)
                             .foregroundColor(.primaryText)
                         
@@ -552,7 +554,7 @@ struct TimerSettingsView: View {
                             
                             Spacer()
                             
-                            Text("\(focusMinutes)분")
+                            Text("\(focusMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.primaryText)
                             
@@ -575,7 +577,7 @@ struct TimerSettingsView: View {
                     
                     // Break Time Setting
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("휴식 시간")
+                        Text("break_duration".localized)
                             .font(.headline)
                             .foregroundColor(.primaryText)
                         
@@ -593,7 +595,7 @@ struct TimerSettingsView: View {
                             
                             Spacer()
                             
-                            Text("\(breakMinutes)분")
+                            Text("\(breakMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.primaryText)
                             
@@ -616,7 +618,7 @@ struct TimerSettingsView: View {
                     
                     // Preset Options
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("프리셋")
+                        Text("preset_selection".localized)
                             .font(.headline)
                             .foregroundColor(.primaryText)
                         
@@ -626,7 +628,7 @@ struct TimerSettingsView: View {
                                 breakMinutes = 5
                             }) {
                                 HStack {
-                                    Text("포모도로 (25분/5분)")
+                                    Text("pomodoro".localized + " (25\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
                                         .font(.system(size: 16, weight: .medium))
                                         .foregroundColor(.primaryText)
                                     Spacer()
@@ -652,7 +654,7 @@ struct TimerSettingsView: View {
                                 breakMinutes = 15
                             }) {
                                 HStack {
-                                    Text("울트라딥 (45분/15분)")
+                                    Text("ultradeep".localized + " (45\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
                                         .font(.system(size: 16, weight: .medium))
                                         .foregroundColor(.primaryText)
                                     Spacer()
@@ -678,7 +680,7 @@ struct TimerSettingsView: View {
                                 breakMinutes = 5
                             }) {
                                 HStack {
-                                    Text("숏 포커스 (15분/5분)")
+                                    Text("shortfocus".localized + " (15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
                                         .font(.system(size: 16, weight: .medium))
                                         .foregroundColor(.primaryText)
                                     Spacer()
@@ -705,11 +707,11 @@ struct TimerSettingsView: View {
                 }
                 .padding()
             }
-            .navigationTitle("타이머 설정")
+            .navigationTitle("focus_settings".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("완료") {
+                    Button("save".localized) {
                         dismiss()
                     }
                     .foregroundColor(.primaryText)

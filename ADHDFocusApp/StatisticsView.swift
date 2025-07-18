@@ -32,12 +32,12 @@ struct StatisticsView: View {
     private var headerView: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("통계")
+                Text("statistics_title".localized)
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.primaryText)
                 
-                Text("나의 성장을 확인해보세요")
+                Text("statistics_subtitle".localized)
                     .font(.caption)
                     .foregroundColor(.secondaryText)
             }
@@ -111,7 +111,7 @@ struct StatisticsView: View {
     // MARK: - Overall Progress View
     private var overallProgressView: some View {
         VStack(spacing: 16) {
-            Text("전체 진행률")
+            Text("statistics_overall_progress".localized)
                 .font(.headline)
                 .foregroundColor(.primaryText)
             
@@ -132,7 +132,7 @@ struct StatisticsView: View {
                         }
                     )
                     
-                    Text("할 일")
+                    Text("todos".localized)
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -153,7 +153,7 @@ struct StatisticsView: View {
                         }
                     )
                     
-                    Text("습관")
+                    Text("habits".localized)
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -167,14 +167,14 @@ struct StatisticsView: View {
                     )
                     .overlay(
                         VStack(spacing: 2) {
-                            Text("\(totalFocusTime)분")
+                            Text("\(totalFocusTime)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primaryText)
                         }
                     )
                     
-                    Text("집중 시간")
+                    Text("focus_time".localized)
                         .font(.caption)
                         .foregroundColor(.secondaryText)
                 }
@@ -188,7 +188,7 @@ struct StatisticsView: View {
     private var todoStatisticsWithChartView: some View {
         VStack(spacing: 16) {
             HStack {
-                Text("할 일 통계")
+                Text("statistics_todo_statistics".localized)
                     .font(.headline)
                     .foregroundColor(.primaryText)
                 Spacer()
@@ -206,7 +206,7 @@ struct StatisticsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.primaryText)
-                        Text("완료/전체")
+                        Text("daily_todo_completion_rate".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -220,7 +220,7 @@ struct StatisticsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.successColor)
-                        Text("완료율")
+                        Text("completion_rate".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -234,7 +234,7 @@ struct StatisticsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.warningColor)
-                        Text("미완료")
+                        Text("incomplete_todos".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -250,7 +250,7 @@ struct StatisticsView: View {
     private var habitStatisticsWithChartView: some View {
         VStack(spacing: 16) {
             HStack {
-                Text("습관 통계")
+                Text("statistics_habit_statistics".localized)
                     .font(.headline)
                     .foregroundColor(.primaryText)
                 Spacer()
@@ -268,7 +268,7 @@ struct StatisticsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.primaryText)
-                        Text("완료/전체")
+                        Text("daily_habit_completion_rate".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -282,7 +282,7 @@ struct StatisticsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.successColor)
-                        Text("완료율")
+                        Text("completion_rate".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -292,11 +292,11 @@ struct StatisticsView: View {
                     
                     // Longest Streak
                     VStack(spacing: 4) {
-                        Text("\(longestStreak)일")
+                        Text("\(longestStreak)\(Locale.current.identifier.hasPrefix("ko") ? "일" : "d")")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.warningColor)
-                        Text("최고 연속")
+                        Text("longest_streak".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -312,7 +312,7 @@ struct StatisticsView: View {
     private var focusTimeStatisticsWithChartView: some View {
         VStack(spacing: 16) {
             HStack {
-                Text("집중 시간 통계")
+                Text("statistics_focus_statistics".localized)
                     .font(.headline)
                     .foregroundColor(.primaryText)
                 Spacer()
@@ -326,11 +326,11 @@ struct StatisticsView: View {
                 HStack(spacing: 20) {
                     // Total Focus Time
                     VStack(spacing: 4) {
-                        Text("\(totalFocusTime)분")
+                        Text("\(totalFocusTime)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.primaryText)
-                        Text("총 집중")
+                        Text("focus_duration_total".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -344,7 +344,7 @@ struct StatisticsView: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.successColor)
-                        Text("완료 세션")
+                        Text("focus_sessions_completed".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -354,11 +354,11 @@ struct StatisticsView: View {
                     
                     // Average Duration
                     VStack(spacing: 4) {
-                        Text("\(averageSessionDuration)분")
+                        Text("\(averageSessionDuration)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.accentColor)
-                        Text("평균 세션")
+                        Text("focus_duration_average".localized)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                     }
@@ -397,9 +397,9 @@ struct StatisticsView: View {
     // MARK: - Helper Methods
     private func periodTitle(for index: Int) -> String {
         switch index {
-        case 0: return "이번 주"
-        case 1: return "이번 달"
-        case 2: return "전체"
+        case 0: return "this_week".localized
+        case 1: return "this_month".localized
+        case 2: return "all".localized
         default: return ""
         }
     }
@@ -485,8 +485,8 @@ struct StatisticsView: View {
         let weekEnd = calendar.date(byAdding: .day, value: 6, to: weekStart) ?? selectedDate
         
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "M월 d일"
+        formatter.locale = Locale.current
+        formatter.dateFormat = Locale.current.identifier.hasPrefix("ko") ? "M월 d일" : "M/d"
         
         return "\(formatter.string(from: weekStart)) - \(formatter.string(from: weekEnd))"
     }
@@ -496,8 +496,8 @@ struct StatisticsView: View {
         let selectedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: Date()) ?? Date()
         
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 M월"
+        formatter.locale = Locale.current
+        formatter.dateFormat = Locale.current.identifier.hasPrefix("ko") ? "yyyy년 M월" : "MMM yyyy"
         
         return formatter.string(from: selectedDate)
     }
@@ -548,7 +548,15 @@ struct StatisticsView: View {
     
     // MARK: - Weekly Data Calculation
     private func getWeeklyTodoData() -> [WeeklyTodoData] {
-        let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+        let weekdays = [
+            "weekday_sun_short".localized,
+            "weekday_mon_short".localized,
+            "weekday_tue_short".localized,
+            "weekday_wed_short".localized,
+            "weekday_thu_short".localized,
+            "weekday_fri_short".localized,
+            "weekday_sat_short".localized
+        ]
         let calendar = Calendar.current
         let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
         let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
@@ -573,7 +581,15 @@ struct StatisticsView: View {
     }
     
     private func getWeeklyHabitData() -> [WeeklyHabitData] {
-        let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+        let weekdays = [
+            "weekday_sun_short".localized,
+            "weekday_mon_short".localized,
+            "weekday_tue_short".localized,
+            "weekday_wed_short".localized,
+            "weekday_thu_short".localized,
+            "weekday_fri_short".localized,
+            "weekday_sat_short".localized
+        ]
         let calendar = Calendar.current
         let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
         let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
@@ -608,7 +624,15 @@ struct StatisticsView: View {
     }
     
     private func getWeeklyFocusData() -> [WeeklyFocusData] {
-        let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+        let weekdays = [
+            "weekday_sun_short".localized,
+            "weekday_mon_short".localized,
+            "weekday_tue_short".localized,
+            "weekday_wed_short".localized,
+            "weekday_thu_short".localized,
+            "weekday_fri_short".localized,
+            "weekday_sat_short".localized
+        ]
         let calendar = Calendar.current
         let selectedDate = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: Date()) ?? Date()
         let weekStart = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
