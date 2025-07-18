@@ -346,7 +346,7 @@ struct FocusTimerView: View {
             // Session Counter
             HStack(spacing: 0) {
                 VStack(spacing: 4) {
-                    Text("Completed") // 기존 Completed Sessions에서 변경
+                    Text("\(completedSessions)")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primaryText)
                     
@@ -709,7 +709,8 @@ struct TimerSettingsView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        .background(Color(hex: "F7F5F2"))
+        .preferredColorScheme(.light)
     }
 }
 

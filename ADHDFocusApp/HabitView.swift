@@ -44,49 +44,53 @@ struct HabitView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            headerView
-            
-            // Period Selector
-            periodSelector
-            
-            // Navigation
-            if selectedPeriod == .weekly {
-                weekNavigation
-            } else {
-                monthNavigation
-            }
-            
-            // Progress Header
-            progressHeader
-            
-            // Habit List
-            habitListView
-            
-            Spacer()
-        }
-        .background(.clear)
-        
-        // Floating Action Button
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: { showingAddHabit = true }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 56, height: 56)
-                        .background(
-                            Circle()
-                                .fill(Color.mainPoint)
-                        )
+        ZStack {
+            VStack(spacing: 0) {
+                // Header
+                headerView
+                
+                // Period Selector
+                periodSelector
+                
+                // Navigation
+                if selectedPeriod == .weekly {
+                    weekNavigation
+                } else {
+                    monthNavigation
                 }
-                .background(.clear)
-                .padding(.trailing, 20)
-                .padding(.bottom, 100) // 탭바 위 공간
+                
+                // Progress Header
+                progressHeader
+                
+                // Habit List
+                habitListView
+                
+                Spacer()
             }
+            .background(.clear)
+            
+            // Floating Action Button
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: { showingAddHabit = true }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(width: 56, height: 56)
+                            .background(
+                                Circle()
+                                    .fill(Color.mainPoint)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            )
+                    }
+                    .background(.clear)
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 100) // 탭바 위 공간
+                }
+            }
+            .background(.clear)
         }
         .background(.clear)
 
