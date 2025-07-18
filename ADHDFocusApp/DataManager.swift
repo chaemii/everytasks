@@ -16,7 +16,6 @@ class DataManager: ObservableObject {
     
     init() {
         loadData()
-        setupSampleDataIfNeeded()
     }
     
     // MARK: - Todo Management

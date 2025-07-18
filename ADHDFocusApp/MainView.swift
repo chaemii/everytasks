@@ -31,30 +31,26 @@ struct MainView: View {
     }
     
     var body: some View {
-        ZStack {
-            // 배경색
-            Color.appBackground
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            // Header
+            headerView
             
-            VStack(spacing: 0) {
-                // Header
-                headerView
-                
-                // Period Selector
-                periodSelector
-                
-                // Content View (Calendar + Task List)
-                ScrollView {
-                    VStack(spacing: 0) {
-                        calendarView
-                        taskListView
-                    }
-                    .padding(.bottom, 120) // 스크롤 시 하단 할일 컴포넌트들이 떨어지는 현상 해결
+            // Period Selector
+            periodSelector
+            
+            // Content View (Calendar + Task List)
+            ScrollView {
+                VStack(spacing: 0) {
+                    calendarView
+                    taskListView
                 }
-                
-                Spacer()
+                .padding(.bottom, 120) // 스크롤 시 하단 할일 컴포넌트들이 떨어지는 현상 해결
             }
+            .background(.clear)
+            
+            Spacer()
         }
+        .background(.clear)
         .sheet(isPresented: $showingAddTodo) {
             AddTaskView()
         }
@@ -113,10 +109,10 @@ struct MainView: View {
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedPeriod == period ? Color.mainPoint : Color.clear)
+                                .fill(selectedPeriod == period ? Color.mainPoint : Color.cardBackground)
                         )
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: selectedPeriod == period ? .white : .secondaryText)
+                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
@@ -160,7 +156,7 @@ struct MainView: View {
                         .foregroundColor(.primaryText)
                         .font(.system(size: 16, weight: .medium))
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                .background(.clear)
                 
                 Spacer()
                 
@@ -180,7 +176,7 @@ struct MainView: View {
                         .foregroundColor(.primaryText)
                         .font(.system(size: 16, weight: .medium))
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                .background(.clear)
             }
             
             // Week Days
@@ -223,10 +219,10 @@ struct MainView: View {
                         .padding(.vertical, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.clear)
+                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.cardBackground)
                         )
                     }
-                    .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                    .background(.clear)
                 }
             }
         }
@@ -247,7 +243,7 @@ struct MainView: View {
                         .foregroundColor(.primaryText)
                         .font(.system(size: 16, weight: .medium))
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                .background(.clear)
                 
                 Spacer()
                 
@@ -267,7 +263,7 @@ struct MainView: View {
                         .foregroundColor(.primaryText)
                         .font(.system(size: 16, weight: .medium))
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                .background(.clear)
             }
             
             // Calendar Grid
@@ -337,10 +333,10 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.clear)
+                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.cardBackground)
                         )
                     }
-                    .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                    .background(.clear)
                 }
             }
         }
@@ -571,6 +567,14 @@ struct CelebrationView: View {
                             .foregroundColor(Color(hex: "FFFDFA"))
                             .multilineTextAlignment(.center)
                     }
+                    
+                    // X 버튼
+                    Button(action: hideCelebration) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(Color(hex: "FFFDFA").opacity(0.7))
+                    }
+                    .padding(.top, 8)
                 }
                 .padding(30)
                 .offset(y: animationOffset)
@@ -697,7 +701,7 @@ struct AddTaskView: View {
                                             .padding(.vertical, 6)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(priority == priorityOption ? priorityOption.color : Color.clear)
+                                                    .fill(priority == priorityOption ? priorityOption.color : Color.cardBackground)
                                                     .overlay(
                                                         RoundedRectangle(cornerRadius: 8)
                                                             .stroke(priorityOption.color, lineWidth: 1)
@@ -739,7 +743,7 @@ struct AddTaskView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .background(Color(hex: "F7F5F2"))
+            .background(.clear)
             .navigationTitle("add_new_todo".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -845,7 +849,7 @@ struct EditTaskView: View {
                                             .padding(.vertical, 6)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(priority == priorityOption ? priorityOption.color : Color.clear)
+                                                    .fill(priority == priorityOption ? priorityOption.color : Color.cardBackground)
                                                     .overlay(
                                                         RoundedRectangle(cornerRadius: 8)
                                                             .stroke(priorityOption.color, lineWidth: 1)
@@ -887,7 +891,7 @@ struct EditTaskView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .background(Color(hex: "F7F5F2"))
+            .background(.clear)
             .navigationTitle("edit_todo".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -987,7 +991,7 @@ struct HabitTaskCard: View {
                     .scaleEffect(isCompleted ? 1.1 : 1.0)
                     .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isCompleted)
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -1078,7 +1082,7 @@ struct TodoTaskCard: View {
                     .scaleEffect(todo.isCompleted ? 1.1 : 1.0)
                     .animation(.spring(response: 0.3, dampingFraction: 0.6), value: todo.isCompleted)
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -1119,7 +1123,7 @@ struct TodoTaskCard: View {
                     .foregroundColor(.secondaryText)
                     .rotationEffect(.degrees(90))
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .secondaryText)
+            .background(.clear)
         }
         .padding()
         .background(Color(hex: "#FFFDFA"))

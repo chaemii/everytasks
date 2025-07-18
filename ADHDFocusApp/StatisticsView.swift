@@ -9,23 +9,17 @@ struct StatisticsView: View {
     @State private var currentMonthOffset = 0 // 월간 오프셋 추가
     
     var body: some View {
-        ZStack {
-            Color.appBackground
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            // Header
+            headerView
             
-            VStack(spacing: 0) {
-                // Header
-                headerView
-                
-                // Period Selector
-                periodSelector
-                
-                // Statistics Content
-                statisticsContent
-                
-                Spacer()
-            }
+            // Period Selector
+            periodSelector
+            
+            // Statistics Content
+            statisticsContent
         }
+        .background(.clear)
     }
     
     // MARK: - Header View
@@ -61,10 +55,10 @@ struct StatisticsView: View {
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedPeriod == index ? Color.mainPoint : Color.clear)
+                                .fill(selectedPeriod == index ? Color.mainPoint : Color.cardBackground)
                         )
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: selectedPeriod == index ? .white : .secondaryText)
+                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
@@ -106,6 +100,7 @@ struct StatisticsView: View {
             }
             .padding()
         }
+        .background(.clear)
     }
     
     // MARK: - Overall Progress View
@@ -416,7 +411,7 @@ struct StatisticsView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
             
             Spacer()
             
@@ -435,7 +430,7 @@ struct StatisticsView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
@@ -453,7 +448,7 @@ struct StatisticsView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
             
             Spacer()
             
@@ -472,7 +467,7 @@ struct StatisticsView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)

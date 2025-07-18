@@ -71,10 +71,7 @@ struct FocusTimerView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.appBackground
-                .ignoresSafeArea()
-            
+        ScrollView {
             VStack(spacing: 0) {
                 // Header
                 headerView
@@ -93,9 +90,10 @@ struct FocusTimerView: View {
                 // Session Info
                 sessionInfo
                 
-                Spacer()
+                Spacer(minLength: 100)
             }
         }
+        .background(.clear)
         .onAppear {
             setupTimer()
         }
@@ -113,10 +111,6 @@ struct FocusTimerView: View {
     // MARK: - Preset Selection View
     private var presetSelectionView: some View {
         VStack(spacing: 12) {
-            Text("preset_selection".localized)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.secondaryText)
-            
             HStack(spacing: 8) {
                 ForEach(TimerPreset.allCases, id: \.self) { preset in
                     Button(action: {
@@ -168,8 +162,9 @@ struct FocusTimerView: View {
                 Image(systemName: "slider.horizontal.3")
                     .font(.title2)
                     .foregroundColor(.primaryText)
+                    .frame(width: 44, height: 44)
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
         }
         .padding()
     }
@@ -308,7 +303,7 @@ struct FocusTimerView: View {
                             )
                     )
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
             
             // Play/Pause Button
             Button(action: toggleTimer) {
@@ -321,7 +316,7 @@ struct FocusTimerView: View {
                             .fill(isBreakTime ? Color.successColor : selectedPreset.color)
                     )
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .white)
+            .background(.clear)
             .scaleEffect(isTimerRunning ? 1.1 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: isTimerRunning)
             
@@ -340,7 +335,7 @@ struct FocusTimerView: View {
                             )
                     )
             }
-            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            .background(.clear)
         }
         .padding(.vertical, 20)
     }
@@ -529,184 +524,180 @@ struct TimerSettingsView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
-                Color.appBackground
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 24) {
-                    // Focus Time Setting
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("focus_duration".localized)
-                            .font(.headline)
-                            .foregroundColor(.primaryText)
-                        
-                        HStack {
-                            Button(action: {
-                                if focusMinutes > 5 {
-                                    focusMinutes -= 5
-                                }
-                            }) {
-                                Image(systemName: "minus")
-                                    .font(.title2)
-                                    .foregroundColor(.primaryText)
+            VStack(spacing: 24) {
+                // Focus Time Setting
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("focus_duration".localized)
+                        .font(.headline)
+                        .foregroundColor(.primaryText)
+                    
+                    HStack {
+                        Button(action: {
+                            if focusMinutes > 5 {
+                                focusMinutes -= 5
                             }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
-                            
-                            Spacer()
-                            
-                            Text("\(focusMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
-                                .font(.system(size: 20, weight: .bold))
+                        }) {
+                            Image(systemName: "minus")
+                                .font(.title2)
                                 .foregroundColor(.primaryText)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                if focusMinutes < 60 {
-                                    focusMinutes += 5
-                                }
-                            }) {
-                                Image(systemName: "plus")
-                                    .font(.title2)
-                                    .foregroundColor(.primaryText)
-                            }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
                         }
-                        .padding()
-                        .cardStyle()
-                    }
-                    
-                    // Break Time Setting
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("break_duration".localized)
-                            .font(.headline)
+                        .background(.clear)
+                        
+                        Spacer()
+                        
+                        Text("\(focusMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.primaryText)
                         
-                        HStack {
-                            Button(action: {
-                                if breakMinutes > 5 {
-                                    breakMinutes -= 5
-                                }
-                            }) {
-                                Image(systemName: "minus")
-                                    .font(.title2)
-                                    .foregroundColor(.primaryText)
+                        Spacer()
+                        
+                        Button(action: {
+                            if focusMinutes < 60 {
+                                focusMinutes += 5
                             }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
-                            
-                            Spacer()
-                            
-                            Text("\(breakMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
-                                .font(.system(size: 20, weight: .bold))
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title2)
                                 .foregroundColor(.primaryText)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                if breakMinutes < 30 {
-                                    breakMinutes += 5
-                                }
-                            }) {
-                                Image(systemName: "plus")
-                                    .font(.title2)
-                                    .foregroundColor(.primaryText)
-                            }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
                         }
-                        .padding()
-                        .cardStyle()
+                        .background(.clear)
                     }
-                    
-                    // Preset Options
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("preset_selection".localized)
-                            .font(.headline)
-                            .foregroundColor(.primaryText)
-                        
-                        VStack(spacing: 8) {
-                            Button(action: {
-                                focusMinutes = 25
-                                breakMinutes = 5
-                            }) {
-                                HStack {
-                                    Text("pomodoro".localized + " (25\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.primaryText)
-                                    Spacer()
-                                    if focusMinutes == 25 && breakMinutes == 5 {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.successColor)
-                                    }
-                                }
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.subColor3.opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color.subColor3.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
-                            
-                            Button(action: {
-                                focusMinutes = 45
-                                breakMinutes = 15
-                            }) {
-                                HStack {
-                                    Text("ultradeep".localized + " (45\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.primaryText)
-                                    Spacer()
-                                    if focusMinutes == 45 && breakMinutes == 15 {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.successColor)
-                                    }
-                                }
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(hex: "A4D0B4").opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color(hex: "A4D0B4").opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
-                            
-                            Button(action: {
-                                focusMinutes = 15
-                                breakMinutes = 5
-                            }) {
-                                HStack {
-                                    Text("shortfocus".localized + " (15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.primaryText)
-                                    Spacer()
-                                    if focusMinutes == 15 && breakMinutes == 5 {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.successColor)
-                                    }
-                                }
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(hex: "C1E2FF").opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color(hex: "C1E2FF").opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
-                        }
-                    }
-                    
-                    Spacer()
+                    .padding()
+                    .cardStyle()
                 }
-                .padding()
+                
+                // Break Time Setting
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("break_duration".localized)
+                        .font(.headline)
+                        .foregroundColor(.primaryText)
+                    
+                    HStack {
+                        Button(action: {
+                            if breakMinutes > 5 {
+                                breakMinutes -= 5
+                            }
+                        }) {
+                            Image(systemName: "minus")
+                                .font(.title2)
+                                .foregroundColor(.primaryText)
+                        }
+                        .background(.clear)
+                        
+                        Spacer()
+                        
+                        Text("\(breakMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.primaryText)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            if breakMinutes < 30 {
+                                breakMinutes += 5
+                            }
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title2)
+                                .foregroundColor(.primaryText)
+                        }
+                        .background(.clear)
+                    }
+                    .padding()
+                    .cardStyle()
+                }
+                
+                // Preset Options
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("preset_selection".localized)
+                        .font(.headline)
+                        .foregroundColor(.primaryText)
+                    
+                    VStack(spacing: 8) {
+                        Button(action: {
+                            focusMinutes = 25
+                            breakMinutes = 5
+                        }) {
+                            HStack {
+                                Text("pomodoro".localized + " (25\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.primaryText)
+                                Spacer()
+                                if focusMinutes == 25 && breakMinutes == 5 {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.successColor)
+                                }
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.subColor3.opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color.subColor3.opacity(0.3), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        .background(.clear)
+                        
+                        Button(action: {
+                            focusMinutes = 45
+                            breakMinutes = 15
+                        }) {
+                            HStack {
+                                Text("ultradeep".localized + " (45\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.primaryText)
+                                Spacer()
+                                if focusMinutes == 45 && breakMinutes == 15 {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.successColor)
+                                }
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(hex: "A4D0B4").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color(hex: "A4D0B4").opacity(0.3), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        .background(.clear)
+                        
+                        Button(action: {
+                            focusMinutes = 15
+                            breakMinutes = 5
+                        }) {
+                            HStack {
+                                Text("shortfocus".localized + " (15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.primaryText)
+                                Spacer()
+                                if focusMinutes == 15 && breakMinutes == 5 {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.successColor)
+                                }
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(hex: "C1E2FF").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color(hex: "C1E2FF").opacity(0.3), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        .background(.clear)
+                    }
+                }
+                
+                Spacer()
             }
+            .background(.clear)
+            .padding()
             .navigationTitle("focus_settings".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C2DDADDB2E251668005B2C3C"
-               BuildableName = "ADHDFocusApp.app"
-               BlueprintName = "ADHDFocusApp"
+               BuildableName = "EveryTasks.app"
+               BlueprintName = "EveryTasks"
                ReferencedContainer = "container:ADHDFocusApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C2DDADDB2E251668005B2C3C"
-            BuildableName = "ADHDFocusApp.app"
-            BlueprintName = "ADHDFocusApp"
+            BuildableName = "EveryTasks.app"
+            BlueprintName = "EveryTasks"
             ReferencedContainer = "container:ADHDFocusApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -86,8 +86,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C2DDADDB2E251668005B2C3C"
-            BuildableName = "ADHDFocusApp.app"
-            BlueprintName = "ADHDFocusApp"
+            BuildableName = "EveryTasks.app"
+            BlueprintName = "EveryTasks"
             ReferencedContainer = "container:ADHDFocusApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

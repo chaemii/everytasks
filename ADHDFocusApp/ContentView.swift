@@ -7,9 +7,9 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            // 배경색
-            Color.appBackground
-                .ignoresSafeArea()
+            // 앱 전체 배경색 - 최상위에서만 지정
+            Color(hex: "#F7F5F2")
+                .ignoresSafeArea(.all, edges: .all)
             
             VStack(spacing: 0) {
                 // Main Content
@@ -49,13 +49,15 @@ struct ContentView: View {
                                         .fill(Color.mainPoint)
                                 )
                         }
-                        .modernButton(backgroundColor: Color.clear, foregroundColor: .white)
+                        .background(.clear)
                         .padding(.trailing, 20)
                         .padding(.bottom, 108) // 탭바 위 공간 조정 (100 → 108)
                     }
                 }
+                .background(.clear)
             }
         }
+        .background(.clear)
         .environmentObject(dataManager)
         .sheet(isPresented: $showingAddTask) {
             AddTaskView()
@@ -83,8 +85,9 @@ struct ContentView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
+                    .background(.clear)
                 }
-                .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
