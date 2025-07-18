@@ -71,7 +71,12 @@ struct FocusTimerView: View {
     }
     
     var body: some View {
-        ScrollView {
+        ZStack {
+            // 배경색
+            Color.appBackground
+                .ignoresSafeArea(.all, edges: .all)
+            
+            ScrollView {
             VStack(spacing: 0) {
                 // Header
                 headerView
@@ -92,8 +97,8 @@ struct FocusTimerView: View {
                 
                 Spacer(minLength: 100)
             }
+            }
         }
-        .background(.clear)
         .onAppear {
             setupTimer()
         }
@@ -164,7 +169,6 @@ struct FocusTimerView: View {
                     .foregroundColor(.primaryText)
                     .frame(width: 44, height: 44)
             }
-            .background(.clear)
         }
         .padding()
     }

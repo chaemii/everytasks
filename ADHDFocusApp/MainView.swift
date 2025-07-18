@@ -31,7 +31,12 @@ struct MainView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack {
+            // 배경색
+            Color.appBackground
+                .ignoresSafeArea(.all, edges: .all)
+            
+            VStack(spacing: 0) {
             // Header
             headerView
             
@@ -44,13 +49,12 @@ struct MainView: View {
                     calendarView
                     taskListView
                 }
-                .padding(.bottom, 120) // 스크롤 시 하단 할일 컴포넌트들이 떨어지는 현상 해결
+                .padding(.bottom, 120)
             }
-            .background(.clear)
             
             Spacer()
+            }
         }
-        .background(.clear)
         .sheet(isPresented: $showingAddTodo) {
             AddTaskView()
         }
@@ -84,8 +88,10 @@ struct MainView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(
-                        Capsule()
-                            .fill(Color.cardBackground)
+                        ZStack {
+                            Capsule()
+                                .fill(Color.clear)
+                        }
                     )
             }
         }
@@ -108,21 +114,16 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedPeriod == period ? Color.mainPoint : Color.cardBackground)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selectedPeriod == period ? Color.mainPoint : Color.clear)
+                            }
                         )
                 }
-                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBackground)
-                .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
-        )
-        .padding(.horizontal, 20)
         .padding(.top, 16)
     }
     
@@ -176,7 +177,6 @@ struct MainView: View {
                         .foregroundColor(.primaryText)
                         .font(.system(size: 16, weight: .medium))
                 }
-                .background(.clear)
             }
             
             // Week Days
@@ -218,11 +218,12 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.cardBackground)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.clear)
+                            }
                         )
                     }
-                    .background(.clear)
                 }
             }
         }
@@ -263,7 +264,6 @@ struct MainView: View {
                         .foregroundColor(.primaryText)
                         .font(.system(size: 16, weight: .medium))
                 }
-                .background(.clear)
             }
             
             // Calendar Grid
@@ -332,11 +332,12 @@ struct MainView: View {
                         .frame(height: 80) // 높이 증가 (50 → 80)
                         .frame(maxWidth: .infinity)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.cardBackground)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(isSelected ? Color.mainPoint.opacity(0.4) : Color.clear)
+                            }
                         )
                     }
-                    .background(.clear)
                 }
             }
         }
@@ -663,7 +664,7 @@ struct AddTaskView: View {
                             TextField("form_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -678,7 +679,7 @@ struct AddTaskView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -743,7 +744,7 @@ struct AddTaskView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .background(.clear)
+            .background(Color(hex: "#F7F5F2"))
             .navigationTitle("add_new_todo".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -811,7 +812,7 @@ struct EditTaskView: View {
                             TextField("edit_form_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -826,7 +827,7 @@ struct EditTaskView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -891,7 +892,7 @@ struct EditTaskView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .background(.clear)
+            .background(Color(hex: "#F7F5F2"))
             .navigationTitle("edit_todo".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

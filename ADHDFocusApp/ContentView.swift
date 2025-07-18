@@ -7,8 +7,8 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            // 앱 전체 배경색 - 최상위에서만 지정
-            Color(hex: "#F7F5F2")
+            // 앱 전체 배경색
+            Color.appBackground
                 .ignoresSafeArea(.all, edges: .all)
             
             VStack(spacing: 0) {
@@ -49,15 +49,12 @@ struct ContentView: View {
                                         .fill(Color.mainPoint)
                                 )
                         }
-                        .background(.clear)
                         .padding(.trailing, 20)
-                        .padding(.bottom, 108) // 탭바 위 공간 조정 (100 → 108)
+                        .padding(.bottom, 108)
                     }
                 }
-                .background(.clear)
             }
         }
-        .background(.clear)
         .environmentObject(dataManager)
         .sheet(isPresented: $showingAddTask) {
             AddTaskView()
@@ -85,18 +82,18 @@ struct ContentView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(.clear)
                 }
-                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 8) // 상단 여백 줄임 (12 → 8)
-        .padding(.bottom, 16) // 하단 여백 늘림 (12 → 16)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
         .background(
-            Rectangle()
-                .fill(Color.cardBackground)
-                .shadow(color: Color.charcoal.opacity(0.1), radius: 8, x: 0, y: -4)
+            ZStack {
+                Rectangle()
+                    .fill(Color.clear)
+                    .shadow(color: Color.charcoal.opacity(0.1), radius: 8, x: 0, y: -4)
+            }
         )
     }
     

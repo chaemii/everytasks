@@ -1,5 +1,7 @@
 import SwiftUI
 
+
+
 // MARK: - Color Extension
 extension Color {
     func toHex() -> String? {
@@ -23,7 +25,7 @@ struct ADHDTheme {
     
     // MARK: - Core Colors
     static let appBackground = Color(hex: "F7F5F2")      // 앱 배경색
-    static let cardBackground = Color(hex: "FFFDFA")     // 카드, 리스트 컴포넌트 배경색
+    static let cardBackground = Color.clear              // 카드 배경색 (투명)
     static let mainPoint = Color(hex: "A4D0B4")          // 메인 포인트 컬러
     static let subColor1 = Color(hex: "FBEACC")          // 서브 컬러 1
     static let subColor2 = Color(hex: "C1E2FF")          // 서브 컬러 2
@@ -65,15 +67,20 @@ struct ADHDTheme {
         }
         
         func body(content: Content) -> some View {
-            content
-                .background(cardBackground)
-                .cornerRadius(cornerRadius)
-                .shadow(
-                    color: charcoal.opacity(0.1),
-                    radius: shadowRadius,
-                    x: 0,
-                    y: 2
-                )
+            ZStack {
+                // 배경
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(Color.clear)
+                    .shadow(
+                        color: charcoal.opacity(0.1),
+                        radius: shadowRadius,
+                        x: 0,
+                        y: 2
+                    )
+                
+                // 콘텐츠
+                content
+            }
         }
     }
     
@@ -189,6 +196,7 @@ struct ADHDTheme {
                 Circle()
                     .fill(backgroundColor)
             )
+            .background(.clear)
         }
         
         private var backgroundColor: Color {

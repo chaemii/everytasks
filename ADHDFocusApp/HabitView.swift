@@ -45,6 +45,10 @@ struct HabitView: View {
     
     var body: some View {
         ZStack {
+            // 배경색
+            Color.appBackground
+                .ignoresSafeArea(.all, edges: .all)
+            
             VStack(spacing: 0) {
                 // Header
                 headerView
@@ -67,7 +71,6 @@ struct HabitView: View {
                 
                 Spacer()
             }
-            .background(.clear)
             
             // Floating Action Button
             VStack {
@@ -85,14 +88,11 @@ struct HabitView: View {
                                     .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
                             )
                     }
-                    .background(.clear)
                     .padding(.trailing, 20)
-                    .padding(.bottom, 20) // 더 하단으로 이동
+                    .padding(.bottom, 20)
                 }
             }
-            .background(.clear)
         }
-        .background(.clear)
 
         .sheet(isPresented: $showingAddHabit) {
             AddHabitView()
@@ -124,8 +124,10 @@ struct HabitView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(
-                        Capsule()
-                            .fill(Color.cardBackground)
+                        ZStack {
+                            Capsule()
+                                .fill(Color.clear)
+                        }
                     )
             }
         }
@@ -148,21 +150,16 @@ struct HabitView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedPeriod == period ? Color.mainPoint : Color.cardBackground)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selectedPeriod == period ? Color.mainPoint : Color.clear)
+                            }
                         )
                 }
-                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBackground)
-                .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
-        )
-        .padding(.horizontal, 20)
         .padding(.top, 16)
     }
     
@@ -178,7 +175,6 @@ struct HabitView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .background(.clear)
             
             Spacer()
             
@@ -197,7 +193,6 @@ struct HabitView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .background(.clear)
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)
@@ -234,7 +229,6 @@ struct HabitView: View {
                     .foregroundColor(.primaryText)
                     .font(.system(size: 16, weight: .medium))
             }
-            .background(.clear)
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)
@@ -938,7 +932,7 @@ struct AddHabitView: View {
                             TextField("form_habit_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -953,7 +947,7 @@ struct AddHabitView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -1122,7 +1116,7 @@ struct AddHabitView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .background(.clear)
+            .background(Color(hex: "#F7F5F2"))
             .navigationTitle("add_new_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -1206,7 +1200,7 @@ struct EditHabitView: View {
                             TextField("edit_form_habit_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -1221,7 +1215,7 @@ struct EditHabitView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(Color(hex: "FFFDFA"))
+                                .background(.clear)
                                 .cornerRadius(8)
                         }
                         
@@ -1390,7 +1384,7 @@ struct EditHabitView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .background(.clear)
+            .background(Color(hex: "#F7F5F2"))
             .navigationTitle("edit_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

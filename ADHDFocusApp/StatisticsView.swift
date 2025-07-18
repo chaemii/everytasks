@@ -9,7 +9,12 @@ struct StatisticsView: View {
     @State private var currentMonthOffset = 0 // 월간 오프셋 추가
     
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack {
+            // 배경색
+            Color.appBackground
+                .ignoresSafeArea(.all, edges: .all)
+            
+            VStack(spacing: 0) {
             // Header
             headerView
             
@@ -18,8 +23,8 @@ struct StatisticsView: View {
             
             // Statistics Content
             statisticsContent
+            }
         }
-        .background(.clear)
     }
     
     // MARK: - Header View
@@ -54,21 +59,16 @@ struct StatisticsView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedPeriod == index ? Color.mainPoint : Color.cardBackground)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selectedPeriod == index ? Color.mainPoint : Color.clear)
+                            }
                         )
                 }
-                .background(.clear)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.cardBackground)
-                .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
-        )
-        .padding(.horizontal, 20)
         .padding(.top, 16)
     }
     
@@ -100,7 +100,6 @@ struct StatisticsView: View {
             }
             .padding()
         }
-        .background(.clear)
     }
     
     // MARK: - Overall Progress View
