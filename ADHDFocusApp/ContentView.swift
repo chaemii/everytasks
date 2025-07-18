@@ -51,7 +51,7 @@ struct ContentView: View {
                         }
                         .modernButton(backgroundColor: Color.clear, foregroundColor: .white)
                         .padding(.trailing, 20)
-                        .padding(.bottom, 100) // 탭바 위 공간
+                        .padding(.bottom, 108) // 탭바 위 공간 조정 (100 → 108)
                     }
                 }
             }
@@ -88,7 +88,8 @@ struct ContentView: View {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.top, 8) // 상단 여백 줄임 (12 → 8)
+        .padding(.bottom, 16) // 하단 여백 늘림 (12 → 16)
         .background(
             Rectangle()
                 .fill(Color.cardBackground)

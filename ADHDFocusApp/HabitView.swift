@@ -7,6 +7,7 @@ struct HabitView: View {
     @State private var showingEditHabit = false
     @State private var editingHabit: Habit?
     @State private var currentWeekOffset = 0
+    @State private var currentMonthOffset = 0
     
     enum CalendarPeriod: String, CaseIterable {
         case weekly = "주간"
@@ -26,8 +27,12 @@ struct HabitView: View {
                 // Period Selector
                 periodSelector
                 
-                // Week Navigation
-                weekNavigation
+                // Navigation
+                if selectedPeriod == .weekly {
+                    weekNavigation
+                } else {
+                    monthNavigation
+                }
                 
                 // Progress Header
                 progressHeader
@@ -168,20 +173,57 @@ struct HabitView: View {
         .padding(.top, 16)
     }
     
+    // MARK: - Month Navigation
+    private var monthNavigation: some View {
+        HStack {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentMonthOffset -= 1
+                }
+            }) {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(.primaryText)
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+            
+            Spacer()
+            
+            Text(monthFormatter.string(from: getMonthDates().first ?? Date()))
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.primaryText)
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentMonthOffset += 1
+                }
+            }) {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.primaryText)
+                    .font(.system(size: 16, weight: .medium))
+            }
+            .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+    }
+    
     // MARK: - Progress Header
     private var progressHeader: some View {
         VStack(spacing: 12) {
-            let progress = getWeeklyProgress()
+            let progress = selectedPeriod == .weekly ? getWeeklyProgress() : getMonthlyProgress()
             let completedCount = dataManager.habits.filter { habit in
-                let weekDates = getWeekDates()
-                return weekDates.contains { date in
+                let dates = selectedPeriod == .weekly ? getWeekDates() : getMonthDates()
+                return dates.contains { date in
                     habit.completedDates.contains { completedDate in
                         Calendar.current.isDate(completedDate, inSameDayAs: date)
                     }
                 }
             }.count
             
-            Text("이번주 \(Int(progress * 100))% 완료! 조금만 더 힘내세요! 내일이 더 나아질 거예요! 💪")
+            Text(selectedPeriod == .weekly ? "이번주 \(Int(progress * 100))% 완료! 조금만 더 힘내세요! 내일이 더 나아질 거예요! 💪" : "이번달 \(Int(progress * 100))% 완료! 꾸준함이 최고의 습관이에요! 🌟")
                 .font(.caption)
                 .foregroundColor(.secondaryText)
                 .multilineTextAlignment(.leading)
@@ -192,7 +234,7 @@ struct HabitView: View {
                 .padding(.horizontal, 20)
             
             HStack {
-                Text("주간 습관")
+                Text(selectedPeriod == .weekly ? "주간 습관" : "월간 습관")
                     .font(.headline)
                     .foregroundColor(.primaryText)
                 
@@ -216,20 +258,37 @@ struct HabitView: View {
                         emptyStateView
                     } else {
                         ForEach(dataManager.habits) { habit in
-                            HabitCardView(
-                                habit: habit, 
-                                weekDates: getWeekDates(),
-                                onToggle: { date in
-                                    dataManager.completeHabit(habit, for: date)
-                                },
-                                onEdit: {
-                                    editingHabit = habit
-                                    showingEditHabit = true
-                                },
-                                onDelete: {
-                                    dataManager.deleteHabit(habit)
-                                }
-                            )
+                            if selectedPeriod == .weekly {
+                                HabitCardView(
+                                    habit: habit, 
+                                    weekDates: getWeekDates(),
+                                    onToggle: { date in
+                                        dataManager.completeHabit(habit, for: date)
+                                    },
+                                    onEdit: {
+                                        editingHabit = habit
+                                        showingEditHabit = true
+                                    },
+                                    onDelete: {
+                                        dataManager.deleteHabit(habit)
+                                    }
+                                )
+                            } else {
+                                HabitMonthCardView(
+                                    habit: habit,
+                                    monthDates: getMonthDates(),
+                                    onToggle: { date in
+                                        dataManager.completeHabit(habit, for: date)
+                                    },
+                                    onEdit: {
+                                        editingHabit = habit
+                                        showingEditHabit = true
+                                    },
+                                    onDelete: {
+                                        dataManager.deleteHabit(habit)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -281,11 +340,34 @@ struct HabitView: View {
         
         for habit in dataManager.habits {
             for date in weekDates {
-                totalPossible += 1
-                if habit.completedDates.contains(where: { completedDate in
-                    Calendar.current.isDate(completedDate, inSameDayAs: date)
-                }) {
-                    totalCompletions += 1
+                if isHabitApplicableForDate(habit, date: date) {
+                    totalPossible += 1
+                    if habit.completedDates.contains(where: { completedDate in
+                        Calendar.current.isDate(completedDate, inSameDayAs: date)
+                    }) {
+                        totalCompletions += 1
+                    }
+                }
+            }
+        }
+        
+        return totalPossible > 0 ? Double(totalCompletions) / Double(totalPossible) : 0.0
+    }
+    
+    private func getMonthlyProgress() -> Double {
+        let monthDates = getMonthDates()
+        var totalCompletions = 0
+        var totalPossible = 0
+        
+        for habit in dataManager.habits {
+            for date in monthDates {
+                if isHabitApplicableForDate(habit, date: date) {
+                    totalPossible += 1
+                    if habit.completedDates.contains(where: { completedDate in
+                        Calendar.current.isDate(completedDate, inSameDayAs: date)
+                    }) {
+                        totalCompletions += 1
+                    }
                 }
             }
         }
@@ -304,10 +386,44 @@ struct HabitView: View {
         }
     }
     
+    private func getMonthDates() -> [Date] {
+        let calendar = Calendar.current
+        let today = Date()
+        let adjustedDate = calendar.date(byAdding: .month, value: currentMonthOffset, to: today) ?? Date()
+        let monthStart = calendar.dateInterval(of: .month, for: adjustedDate)?.start ?? Date()
+        let daysInMonth = calendar.range(of: .day, in: .month, for: adjustedDate)?.count ?? 30
+        
+        return (0..<daysInMonth).compactMap { day in
+            calendar.date(byAdding: .day, value: day, to: monthStart)
+        }
+    }
+    
+    private func isHabitApplicableForDate(_ habit: Habit, date: Date) -> Bool {
+        let calendar = Calendar.current
+        
+        switch habit.frequency {
+        case .daily:
+            return true
+        case .weekly:
+            let weekday = calendar.component(.weekday, from: date) - 1 // 0=일요일, 1=월요일, ..., 6=토요일
+            return habit.selectedWeekdays.contains(weekday)
+        case .monthly:
+            let dayOfMonth = calendar.component(.day, from: date)
+            return habit.selectedDayOfMonth == dayOfMonth
+        }
+    }
+    
     private var weekFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "M월 d일"
+        return formatter
+    }
+    
+    private var monthFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy년 M월"
         return formatter
     }
 }
@@ -325,18 +441,7 @@ struct HabitCardView: View {
     private let days = ["일", "월", "화", "수", "목", "금", "토"]
     
     private var habitBackgroundColor: Color {
-        switch habit.color {
-        case "C1E2FF":
-            return Color(hex: "E2EEF6")
-        case "A4D0B4":
-            return Color(hex: "E5EEE8")
-        case "F68566":
-            return Color(hex: "F9EAE6")
-        case "FBEACC":
-            return Color(hex: "F7EFE2")
-        default:
-            return Color(hex: habit.color).opacity(0.1)
-        }
+        return Color(hex: "FFFDFA")
     }
     
     private var habitTextColor: Color {
@@ -400,7 +505,7 @@ struct HabitCardView: View {
             }
         }
         .padding()
-        .background(Color(hex: "FFFDFA"))
+        .background(habitBackgroundColor)
         .cornerRadius(16)
         .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
         .offset(x: showingActions ? -120 : 0)
@@ -521,6 +626,211 @@ struct HabitDayCircleView: View {
             .disabled(isDisabled)
             .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
         }
+    }
+}
+
+// MARK: - Habit Month Card View
+struct HabitMonthCardView: View {
+    let habit: Habit
+    let monthDates: [Date]
+    let onToggle: (Date) -> Void
+    let onEdit: () -> Void
+    let onDelete: () -> Void
+    
+    @State private var showingActions = false
+    
+    private var habitBackgroundColor: Color {
+        return Color(hex: "FFFDFA")
+    }
+    
+    private var habitTextColor: Color {
+        if habit.color == "FBEACC" {
+            return Color(hex: "F7D394")
+        } else {
+            return Color(hex: habit.color)
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with title and streak
+            HStack {
+                Text(habit.title)
+                    .font(.headline)
+                    .foregroundColor(.primaryText)
+                
+                Spacer()
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(habitTextColor)
+                    
+                    Text("\(getStreakCount())")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(habitTextColor)
+                }
+            }
+            
+            // Weekday headers
+            HStack(spacing: 4) {
+                ForEach(["일", "월", "화", "수", "목", "금", "토"], id: \.self) { day in
+                    Text(day)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(.secondaryText)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.horizontal, 4)
+            
+            // Month days grid
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 7), spacing: 4) {
+                ForEach(monthDates, id: \.self) { date in
+                    HabitMonthDayView(
+                        date: date,
+                        isCompleted: isCompletedForDate(date),
+                        color: habitTextColor,
+                        onToggle: {
+                            onToggle(date)
+                        },
+                        habit: habit
+                    )
+                }
+            }
+            
+            // Three dots menu button
+            HStack {
+                Spacer()
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showingActions.toggle()
+                    }
+                }) {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.secondaryText)
+                        .rotationEffect(.degrees(90))
+                }
+                .modernButton(backgroundColor: Color.clear, foregroundColor: .secondaryText)
+            }
+        }
+        .padding()
+        .background(habitBackgroundColor)
+        .cornerRadius(16)
+        .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
+        .offset(x: showingActions ? -120 : 0)
+        .overlay(
+            HStack {
+                Spacer()
+                
+                if showingActions {
+                    HStack(spacing: 8) {
+                        Button(action: onEdit) {
+                            Image(systemName: "pencil")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 32, height: 32)
+                                .background(Color(hex: "B3D3BD"))
+                                .cornerRadius(8)
+                        }
+                        
+                        Button(action: onDelete) {
+                            Image(systemName: "trash")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 32, height: 32)
+                                .background(Color(hex: "282828"))
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(.trailing, 16)
+                    .transition(.move(edge: .trailing))
+                }
+            }
+        )
+    }
+    
+    private func isCompletedForDate(_ date: Date) -> Bool {
+        return habit.completedDates.contains { completedDate in
+            Calendar.current.isDate(completedDate, inSameDayAs: date)
+        }
+    }
+    
+    private func getStreakCount() -> Int {
+        let calendar = Calendar.current
+        let today = Date()
+        var streak = 0
+        var currentDate = today
+        
+        while true {
+            if habit.completedDates.contains(where: { completedDate in
+                calendar.isDate(completedDate, inSameDayAs: currentDate)
+            }) {
+                streak += 1
+                currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? Date()
+            } else {
+                break
+            }
+        }
+        
+        return streak
+    }
+}
+
+// MARK: - Habit Month Day View
+struct HabitMonthDayView: View {
+    let date: Date
+    let isCompleted: Bool
+    let color: Color
+    let onToggle: () -> Void
+    let habit: Habit
+    
+    private var isFutureDate: Bool {
+        let calendar = Calendar.current
+        let today = Date()
+        return calendar.compare(date, to: today, toGranularity: .day) == .orderedDescending
+    }
+    
+    private var isApplicableDate: Bool {
+        let calendar = Calendar.current
+        
+        switch habit.frequency {
+        case .daily:
+            return true
+        case .weekly:
+            let weekday = calendar.component(.weekday, from: date) - 1 // 0=일요일, 1=월요일, ..., 6=토요일
+            return habit.selectedWeekdays.contains(weekday)
+        case .monthly:
+            let dayOfMonth = calendar.component(.day, from: date)
+            return habit.selectedDayOfMonth == dayOfMonth
+        }
+    }
+    
+    private var isDisabled: Bool {
+        return isFutureDate || !isApplicableDate
+    }
+    
+    var body: some View {
+        Button(action: {
+            if !isDisabled {
+                onToggle()
+            }
+        }) {
+            VStack(spacing: 4) {
+                Circle()
+                    .fill(isCompleted ? color : (isDisabled ? Color(hex: "D9D9D9") : Color.gray.opacity(0.1)))
+                    .frame(width: 34, height: 34) // 주간 뷰와 동일한 크기
+                    .overlay {
+                        if isCompleted {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.white)
+                                .font(.caption2)
+                        }
+                    }
+            }
+        }
+        .disabled(isDisabled)
+        .modernButton(backgroundColor: Color.clear, foregroundColor: .primaryText)
     }
 }
 

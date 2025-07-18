@@ -27,7 +27,7 @@ struct ADHDTheme {
     static let mainPoint = Color(hex: "A4D0B4")          // 메인 포인트 컬러
     static let subColor1 = Color(hex: "FBEACC")          // 서브 컬러 1
     static let subColor2 = Color(hex: "C1E2FF")          // 서브 컬러 2
-    static let subColor3 = Color(hex: "FF7539")          // 서브 컬러 3
+    static let subColor3 = Color(hex: "F68566")          // 서브 컬러 3
     static let charcoal = Color(hex: "282828")           // 블랙 대용 차콜 컬러
     
     // MARK: - Semantic Colors

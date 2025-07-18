@@ -34,16 +34,12 @@ struct MainView: View {
                 periodSelector
                 
                 // Content View (Calendar + Task List)
-                if selectedPeriod == .monthly {
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            calendarView
-                            taskListView
-                        }
+                ScrollView {
+                    VStack(spacing: 0) {
+                        calendarView
+                        taskListView
                     }
-                } else {
-                    calendarView
-                    taskListView
+                    .padding(.bottom, 120) // 스크롤 시 하단 할일 컴포넌트들이 떨어지는 현상 해결
                 }
                 
                 Spacer()
@@ -135,7 +131,8 @@ struct MainView: View {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 20)
+        .padding(.top, 20) // 다시 20으로 복원
+        .padding(.bottom, 16) // 하단 패딩을 16으로 늘림
     }
     
     // MARK: - Daily Calendar View
@@ -284,29 +281,49 @@ struct MainView: View {
                             selectedDate = date
                         }
                     }) {
-                        VStack(spacing: 4) {
-                            // Date text at top
+                        VStack(spacing: 0) {
+                            // Date text at top (fixed position)
                             Text("\(Calendar.current.component(.day, from: date))")
                                 .font(.system(size: 14, weight: isToday ? .bold : .medium))
                                 .foregroundColor(isSelected ? .white : (isToday ? .mainPoint : .primaryText))
                                 .frame(maxWidth: .infinity, alignment: .top)
+                                .frame(height: 20) // 고정 높이
                             
-                            Spacer()
-                            
-                            // Todo items (up to 4 characters)
+                            // Todo items (max 2 + count) - 상단에 붙임
                             if hasEvents {
                                 let todos = todosForDate(date)
-                                let displayText = todos.prefix(2).map { String($0.title.prefix(2)) }.joined()
-                                if !displayText.isEmpty {
-                                    Text(displayText)
-                                        .font(.system(size: 8, weight: .medium))
-                                        .foregroundColor(.secondaryText)
-                                        .lineLimit(1)
-                                        .frame(maxWidth: .infinity, alignment: .bottom)
+                                VStack(spacing: 2) {
+                                    // Show first 2 todos
+                                    ForEach(todos.prefix(2), id: \.id) { todo in
+                                        Text(String(todo.title.prefix(4)) + (todo.title.count > 4 ? "..." : ""))
+                                            .font(.system(size: 10, weight: .medium))
+                                            .foregroundColor(.charcoal)
+                                            .lineLimit(1)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.horizontal, 4)
+                                            .padding(.vertical, 2)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 4)
+                                                    .fill(getPriorityColor(todo.priority))
+                                            )
+                                    }
+                                    
+                                    // Show +N if there are more than 2 todos
+                                    if todos.count > 2 {
+                                        Text("+\(todos.count - 2)")
+                                            .font(.system(size: 9, weight: .medium))
+                                            .foregroundColor(.charcoal)
+                                            .frame(maxWidth: .infinity, alignment: .trailing)
+                                            .padding(.horizontal, 4)
+                                            .padding(.vertical, 1)
+                                    }
                                 }
+                                .frame(maxWidth: .infinity, alignment: .top)
                             }
+                            
+                            Spacer() // 하단에 Spacer 추가하여 상단 정렬
                         }
-                        .frame(height: 50)
+                        .frame(height: 80) // 높이 증가 (50 → 80)
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
@@ -321,7 +338,7 @@ struct MainView: View {
     
     // MARK: - Task List View
     private var taskListView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 16) { // 8에서 16으로 다시 늘림
             // Header
             HStack {
                 Text("\(weekFormatter.string(from: selectedDate)) 할 일")
@@ -339,7 +356,7 @@ struct MainView: View {
                     .foregroundColor(.secondaryText)
             }
             .padding(.horizontal, 20)
-            .padding(.top, 20)
+            .padding(.top, 0) // 0으로 설정하여 최대한 위로 올림
             
             // Task List
             LazyVStack(spacing: 12) {
@@ -438,29 +455,13 @@ struct MainView: View {
         let calendar = Calendar.current
         let today = selectedDate
         let monthStart = calendar.dateInterval(of: .month, for: today)?.start ?? Date()
-        let firstWeekday = calendar.component(.weekday, from: monthStart)
         let daysInMonth = calendar.range(of: .day, in: .month, for: today)?.count ?? 30
         
         var dates: [Date] = []
         
-        // Add previous month's days
-        for i in (1..<firstWeekday).reversed() {
-            if let date = calendar.date(byAdding: .day, value: -i, to: monthStart) {
-                dates.append(date)
-            }
-        }
-        
-        // Add current month's days
+        // Add current month's days only (1~31일)
         for day in 1...daysInMonth {
             if let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart) {
-                dates.append(date)
-            }
-        }
-        
-        // Add next month's days to fill the grid
-        let remainingDays = 42 - dates.count // 6 weeks * 7 days
-        for day in 1...remainingDays {
-            if let date = calendar.date(byAdding: .day, value: day, to: monthStart) {
                 dates.append(date)
             }
         }
@@ -503,6 +504,19 @@ struct MainView: View {
         }
         lastProgress = currentProgress
     }
+    
+    private func getPriorityColor(_ priority: TodoPriority) -> Color {
+        switch priority {
+        case .urgent:
+            return Color(hex: "F68566") // 긴급 - #F68566로 변경
+        case .high:
+            return Color(hex: "F68566") // 높음 - 빨간색
+        case .medium:
+            return Color(hex: "FBEACC") // 보통 - 노란색
+        case .low:
+            return Color(hex: "A4D0B4") // 낮음 - 초록색
+        }
+    }
 }
 
 // MARK: - Celebration View
@@ -515,7 +529,7 @@ struct CelebrationView: View {
         if isShowing {
             ZStack {
                 // 배경 오버레이
-                Color.black.opacity(0.3)
+                Color.black.opacity(0.5)
                     .ignoresSafeArea()
                     .onTapGesture {
                         hideCelebration()
@@ -553,7 +567,7 @@ struct CelebrationView: View {
                     .cornerRadius(18)
                 }
                 .padding(30)
-                .background(Color.cardBackground.opacity(0.95))
+                .background(Color.cardBackground.opacity(0.85))
                 .cornerRadius(16)
                 .shadow(color: Color.charcoal.opacity(0.2), radius: 20, x: 0, y: 10)
                 .offset(y: animationOffset)
@@ -563,15 +577,9 @@ struct CelebrationView: View {
                     }
                 }
                 
-                // Lottie 컨페티 애니메이션
+                // 컨페티 애니메이션 항상 중앙에 고정
                 AnimationView()
                     .frame(width: 200, height: 200)
-                    .offset(y: confettiOffset)
-            }
-            .onAppear {
-                withAnimation(.easeOut(duration: 2.0)) {
-                    confettiOffset = 1000
-                }
             }
         }
     }
@@ -588,7 +596,6 @@ struct CelebrationView: View {
 
 struct AnimationView: View {
     var body: some View {
-        // 임시로 기본 SwiftUI 애니메이션 사용
         ZStack {
             ForEach(0..<20, id: \.self) { index in
                 Circle()
@@ -912,16 +919,18 @@ struct HabitTaskCard: View {
         let trimmedColor = habit.color.trimmingCharacters(in: .whitespacesAndNewlines)
         switch trimmedColor {
         case "C1E2FF":
-            return Color(hex: "#E2EEF6")
+            return Color(hex: "#E7EEF4")
         case "A4D0B4":
             return Color(hex: "#E5EEE8")
-        case "F68566":
-            return Color(hex: "#F9EAE6")
+        case "F68566", "F3876B":
+            return Color(hex: "#F9EAE6") // 다홍색 계열에 대한 배경색
         case "FBEACC":
             return Color(hex: "#F7EFE2")
-        case "FF7539":
-            return Color(hex: "#FEF2ED")
         default:
+            // 다홍색 계열 색상들을 더 포괄적으로 처리
+            if trimmedColor.hasPrefix("F6") || trimmedColor.hasPrefix("F3") {
+                return Color(hex: "#F9EAE6")
+            }
             return Color.cardBackground
         }
     }
@@ -936,6 +945,18 @@ struct HabitTaskCard: View {
             return Color(hex: "#F7D394")
         }
         return isCompleted ? habitColor : .secondaryText
+    }
+    
+    private func getStreakColor() -> Color {
+        let trimmedColor = habit.color.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch trimmedColor {
+        case "C1E2FF":
+            return Color(hex: "#99CFFF") // #E7EEF4 배경색일 때 연속일수 색상
+        case "FBEACC":
+            return Color(hex: "#FFC662") // #F7EFE2 배경색일 때 연속일수 색상
+        default:
+            return habitColor
+        }
     }
     
     var body: some View {
@@ -960,11 +981,11 @@ struct HabitTaskCard: View {
                     HStack(spacing: 4) {
                         Image(systemName: "flame.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(habitColor)
+                            .foregroundColor(getStreakColor())
                         
                         Text("\(habitStreak)")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(habitColor)
+                            .foregroundColor(getStreakColor())
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
@@ -1082,7 +1103,7 @@ struct TodoTaskCard: View {
             .modernButton(backgroundColor: Color.clear, foregroundColor: .secondaryText)
         }
         .padding()
-        .background(Color.cardBackground)
+        .background(Color(hex: "#FFFDFA"))
         .cornerRadius(16)
         .shadow(color: Color.charcoal.opacity(0.05), radius: 2, x: 0, y: 1)
         .offset(x: showingActions ? -120 : 0)

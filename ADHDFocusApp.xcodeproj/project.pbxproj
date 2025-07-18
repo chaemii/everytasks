@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C2DDAE372E29D732005B2C3C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = C2DDAE362E29D732005B2C3C /* Lottie */; };
-		C2DDAE392E29D732005B2C3C /* Lottie-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = C2DDAE382E29D732005B2C3C /* Lottie-Dynamic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,8 +55,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2DDAE372E29D732005B2C3C /* Lottie in Frameworks */,
-				C2DDAE392E29D732005B2C3C /* Lottie-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,8 +115,6 @@
 			);
 			name = ADHDFocusApp;
 			packageProductDependencies = (
-				C2DDAE362E29D732005B2C3C /* Lottie */,
-				C2DDAE382E29D732005B2C3C /* Lottie-Dynamic */,
 			);
 			productName = ADHDFocusApp;
 			productReference = C2DDADDC2E251668005B2C3C /* ADHDFocusApp.app */;
@@ -575,16 +569,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C2DDAE362E29D732005B2C3C /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C2DDAE352E29CF73005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = Lottie;
-		};
-		C2DDAE382E29D732005B2C3C /* Lottie-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C2DDAE352E29CF73005B2C3C /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = "Lottie-Dynamic";
-		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C2DDADD42E251668005B2C3C /* Project object */;

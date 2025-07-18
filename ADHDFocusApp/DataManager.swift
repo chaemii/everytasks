@@ -225,8 +225,8 @@ class DataManager: ObservableObject {
     
     // MARK: - Sample Data
     private func setupSampleData() {
-        // Only add sample data if no data exists
-        guard todos.isEmpty && habits.isEmpty else { return }
+        // 기존 데이터가 있으면 샘플 데이터로 교체 (테스트용)
+        // guard todos.isEmpty && habits.isEmpty else { return }
         
         // Add sample todos
         let sampleTodos = [
@@ -240,9 +240,10 @@ class DataManager: ObservableObject {
         
         // Add sample habits
         let sampleHabits = [
-            Habit(title: "물마시기", description: "하루 8잔 마시기", category: .health),
-            Habit(title: "운동하기", description: "30분 걷기", category: .exercise),
-            Habit(title: "독서하기", description: "30분 독서", category: .study)
+            Habit(title: "야", description: "테스트 습관", category: .health, color: "F68566"),
+            Habit(title: "물마시기", description: "하루 8잔 마시기", category: .health, color: "C1E2FF"),
+            Habit(title: "운동하기", description: "30분 걷기", category: .exercise, color: "A4D0B4"),
+            Habit(title: "독서하기", description: "30분 독서", category: .study, color: "FBEACC")
         ]
         
         todos = sampleTodos
