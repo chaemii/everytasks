@@ -5,7 +5,6 @@ import Lottie
 struct MainView: View {
     @EnvironmentObject var dataManager: DataManager
     @State private var showingAddTodo = false
-    @State private var showingEditTodo = false
     @State private var editingTodo: Todo?
     @State private var selectedPeriod: CalendarPeriod = .daily
     @State private var selectedDate = Date()
@@ -80,12 +79,8 @@ struct MainView: View {
         .sheet(isPresented: $showingAddTodo) {
             AddTaskView(selectedDate: selectedDate)
         }
-        .sheet(isPresented: $showingEditTodo, onDismiss: {
-            editingTodo = nil
-        }) {
-            if let todo = editingTodo {
-                EditTaskView(todo: todo)
-            }
+        .sheet(item: $editingTodo) { todo in
+            EditTaskView(todo: todo)
         }
         .overlay(
             CelebrationView(isShowing: $showingCelebration)
@@ -420,7 +415,6 @@ struct MainView: View {
                             },
                             onEdit: {
                                 editingTodo = todo
-                                showingEditTodo = true
                             },
                             onDelete: {
                                 dataManager.deleteTodo(todo)
