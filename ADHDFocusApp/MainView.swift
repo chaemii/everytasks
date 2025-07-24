@@ -13,6 +13,7 @@ struct MainView: View {
     @State private var currentMonthOffset = 0
     @State private var showingCelebration = false
     @State private var lastProgress = 0.0
+    @State private var showingActionsForTodo: UUID? = nil
     
 
     
@@ -54,11 +55,34 @@ struct MainView: View {
             
             Spacer()
             }
+            
+            // Floating Action Button
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: { showingAddTodo = true }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(width: 56, height: 56)
+                            .background(
+                                Circle()
+                                    .fill(Color.mainPoint)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            )
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 20)
+                }
+            }
         }
         .sheet(isPresented: $showingAddTodo) {
-            AddTaskView()
+            AddTaskView(selectedDate: selectedDate)
         }
-        .sheet(isPresented: $showingEditTodo) {
+        .sheet(isPresented: $showingEditTodo, onDismiss: {
+            editingTodo = nil
+        }) {
             if let todo = editingTodo {
                 EditTaskView(todo: todo)
             }
@@ -122,9 +146,16 @@ struct MainView: View {
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 6)
         .padding(.vertical, 6)
-        .padding(.top, 16)
+        .padding(.top, 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(hex: "#FFFDFA"))
+                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
     }
     
     // MARK: - Calendar View
@@ -393,7 +424,8 @@ struct MainView: View {
                             },
                             onDelete: {
                                 dataManager.deleteTodo(todo)
-                            }
+                            },
+                            isShowingActions: $showingActionsForTodo
                         )
                     }
                 }
@@ -405,16 +437,16 @@ struct MainView: View {
     
     // MARK: - Empty State View
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 15))
+                .font(.system(size: 30))
                 .foregroundColor(.successColor)
             
-            Text("선택된 날짜에 할 일이 없습니다")
+            Text("empty_todos_title".localized)
                 .font(.system(size: 16))
                 .foregroundColor(.secondaryText)
             
-            Text("새로운 할 일을 추가해보세요!")
+            Text("empty_todos_subtitle".localized)
                 .font(.system(size: 14))
                 .foregroundColor(.secondaryText.opacity(0.7))
         }
@@ -568,20 +600,40 @@ struct CelebrationView: View {
                             .foregroundColor(Color(hex: "FFFDFA"))
                             .multilineTextAlignment(.center)
                     }
-                    
-                    // X 버튼
-                    Button(action: hideCelebration) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(hex: "FFFDFA").opacity(0.7))
-                    }
-                    .padding(.top, 8)
                 }
                 .padding(30)
                 .offset(y: animationOffset)
                 .onAppear {
                     withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                         animationOffset = 0
+                    }
+                    
+                    // 3초 후 자동 종료
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        hideCelebration()
+                    }
+                }
+                
+                // X 버튼 (하단에 별도 배치)
+                VStack {
+                    Spacer()
+                    Button(action: hideCelebration) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(Color(hex: "FFFDFA").opacity(0.7))
+                    }
+                    .padding(.bottom, 50)
+                }
+                .padding(30)
+                .offset(y: animationOffset)
+                .onAppear {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                        animationOffset = 0
+                    }
+                    
+                    // 3초 후 자동 종료
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        hideCelebration()
                     }
                 }
                 
@@ -644,10 +696,17 @@ struct AddTaskView: View {
     @EnvironmentObject var dataManager: DataManager
     @Environment(\.dismiss) private var dismiss
     
+    let selectedDate: Date
+    
     @State private var title = ""
     @State private var description = ""
     @State private var priority: TodoPriority = .medium
-    @State private var targetDate = Date()
+    @State private var targetDate: Date
+    
+    init(selectedDate: Date) {
+        self.selectedDate = selectedDate
+        self._targetDate = State(initialValue: selectedDate)
+    }
     
     var body: some View {
         NavigationView {
@@ -664,7 +723,7 @@ struct AddTaskView: View {
                             TextField("form_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -679,7 +738,7 @@ struct AddTaskView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -812,7 +871,7 @@ struct EditTaskView: View {
                             TextField("edit_form_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -827,7 +886,7 @@ struct EditTaskView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -1072,7 +1131,11 @@ struct TodoTaskCard: View {
     let onToggle: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
-    @State private var showingActions = false
+    @Binding var isShowingActions: UUID?
+    
+    private var showingActions: Bool {
+        return isShowingActions == todo.id
+    }
     
     var body: some View {
         HStack(spacing: 12) {
@@ -1116,7 +1179,11 @@ struct TodoTaskCard: View {
             // Three dots menu button
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.2)) {
-                    showingActions.toggle()
+                    if showingActions {
+                        isShowingActions = nil
+                    } else {
+                        isShowingActions = todo.id
+                    }
                 }
             }) {
                 Image(systemName: "ellipsis")
@@ -1137,7 +1204,10 @@ struct TodoTaskCard: View {
                 
                 if showingActions {
                     HStack(spacing: 8) {
-                        Button(action: onEdit) {
+                        Button(action: {
+                            isShowingActions = nil
+                            onEdit()
+                        }) {
                             Image(systemName: "pencil")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -1146,7 +1216,10 @@ struct TodoTaskCard: View {
                                 .cornerRadius(8)
                         }
                         
-                        Button(action: onDelete) {
+                        Button(action: {
+                            isShowingActions = nil
+                            onDelete()
+                        }) {
                             Image(systemName: "trash")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -1160,6 +1233,13 @@ struct TodoTaskCard: View {
                 }
             }
         )
+        .onTapGesture {
+            if showingActions {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isShowingActions = nil
+                }
+            }
+        }
     }
 }
 

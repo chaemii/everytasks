@@ -67,9 +67,16 @@ struct StatisticsView: View {
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 6)
         .padding(.vertical, 6)
-        .padding(.top, 16)
+        .padding(.top, 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(hex: "#FFFDFA"))
+                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
     }
     
     // MARK: - Statistics Content
@@ -960,7 +967,7 @@ struct StatisticsView: View {
     // MARK: - Weekly Charts
     private var weeklyTodoChart: some View {
         VStack(spacing: 12) {
-            Text(chartTitle(for: "할일 완료율"))
+            Text(chartTitle(for: "chart_weekly_todo_completion".localized))
                 .font(.caption)
                 .foregroundColor(.secondaryText)
                 .padding(.top, 16)
@@ -1005,7 +1012,7 @@ struct StatisticsView: View {
     
     private var weeklyHabitChart: some View {
         VStack(spacing: 12) {
-            Text(chartTitle(for: "습관 완료율"))
+            Text(chartTitle(for: "chart_weekly_habit_completion".localized))
                 .font(.caption)
                 .foregroundColor(.secondaryText)
                 .padding(.top, 16)
@@ -1050,7 +1057,7 @@ struct StatisticsView: View {
     
     private var weeklyFocusChart: some View {
         VStack(spacing: 12) {
-            Text(chartTitle(for: "집중 세션"))
+            Text(chartTitle(for: "chart_weekly_focus_sessions".localized))
                 .font(.caption)
                 .foregroundColor(.secondaryText)
                 .padding(.top, 16)
@@ -1095,9 +1102,9 @@ struct StatisticsView: View {
     // MARK: - Helper Methods
     private func chartTitle(for type: String) -> String {
         switch selectedPeriod {
-        case 0: return "요일별 \(type)"
-        case 1: return "월별 \(type)"
-        case 2: return "전체 \(type)"
+        case 0: return "\(type)"
+        case 1: return "\(type)"
+        case 2: return "\(type)"
         default: return "\(type)"
         }
     }

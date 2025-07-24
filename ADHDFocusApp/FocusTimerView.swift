@@ -7,7 +7,7 @@ struct FocusTimerView: View {
     @State private var isTimerRunning = false
     @State private var isBreakTime = false
     @State private var timer: Timer?
-    @State private var showingSettings = false
+
     @State private var focusMinutes = 25
     @State private var breakMinutes = 5
     @State private var completedSessions = 0
@@ -55,9 +55,9 @@ struct FocusTimerView: View {
         
         var color: Color {
             switch self {
-            case .pomodoro: return Color.subColor3
-            case .ultradeep: return Color(hex: "A4D0B4")
-            case .shortfocus: return Color(hex: "99CFFF")
+            case .pomodoro: return Color(hex: "F68566") // 다홍계열
+            case .ultradeep: return Color(hex: "A4D0B4") // 민트계열
+            case .shortfocus: return Color(hex: "99CFFF") // 블루계열
             }
         }
         
@@ -105,12 +105,7 @@ struct FocusTimerView: View {
         .onDisappear {
             stopTimer()
         }
-        .sheet(isPresented: $showingSettings) {
-            TimerSettingsView(
-                focusMinutes: $focusMinutes,
-                breakMinutes: $breakMinutes
-            )
-        }
+
     }
     
     // MARK: - Preset Selection View
@@ -125,7 +120,7 @@ struct FocusTimerView: View {
                         timeRemaining = preset.focusMinutes * 60
                     }) {
                         Text(preset.rawValue.localized)
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 14, weight: .medium))
                             .foregroundColor(selectedPreset == preset ? .white : preset.color)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -160,15 +155,6 @@ struct FocusTimerView: View {
             }
             
             Spacer()
-            
-            Button(action: {
-                showingSettings = true
-            }) {
-                Image(systemName: "slider.horizontal.3")
-                    .font(.title2)
-                    .foregroundColor(.primaryText)
-                    .frame(width: 44, height: 44)
-            }
         }
         .padding()
     }
@@ -275,7 +261,7 @@ struct FocusTimerView: View {
                     
                     // 메인 원형 배경
                     Circle()
-                        .fill(Color.cardBackground)
+                        .fill(Color(hex: "#FFFDFA"))
                         .frame(width: 320, height: 320)
                         .shadow(
                             color: Color.charcoal.opacity(0.08),
@@ -520,203 +506,7 @@ struct FocusTimerView: View {
     }
 }
 
-// MARK: - Timer Settings View
-struct TimerSettingsView: View {
-    @Binding var focusMinutes: Int
-    @Binding var breakMinutes: Int
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            VStack(spacing: 24) {
-                // Focus Time Setting
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("focus_duration".localized)
-                        .font(.headline)
-                        .foregroundColor(.primaryText)
-                    
-                    HStack {
-                        Button(action: {
-                            if focusMinutes > 5 {
-                                focusMinutes -= 5
-                            }
-                        }) {
-                            Image(systemName: "minus")
-                                .font(.title2)
-                                .foregroundColor(.primaryText)
-                        }
-                        .background(.clear)
-                        
-                        Spacer()
-                        
-                        Text("\(focusMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.primaryText)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            if focusMinutes < 60 {
-                                focusMinutes += 5
-                            }
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.title2)
-                                .foregroundColor(.primaryText)
-                        }
-                        .background(.clear)
-                    }
-                    .padding()
-                    .cardStyle()
-                }
-                
-                // Break Time Setting
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("break_duration".localized)
-                        .font(.headline)
-                        .foregroundColor(.primaryText)
-                    
-                    HStack {
-                        Button(action: {
-                            if breakMinutes > 5 {
-                                breakMinutes -= 5
-                            }
-                        }) {
-                            Image(systemName: "minus")
-                                .font(.title2)
-                                .foregroundColor(.primaryText)
-                        }
-                        .background(.clear)
-                        
-                        Spacer()
-                        
-                        Text("\(breakMinutes)\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.primaryText)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            if breakMinutes < 30 {
-                                breakMinutes += 5
-                            }
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.title2)
-                                .foregroundColor(.primaryText)
-                        }
-                        .background(.clear)
-                    }
-                    .padding()
-                    .cardStyle()
-                }
-                
-                // Preset Options
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("preset_selection".localized)
-                        .font(.headline)
-                        .foregroundColor(.primaryText)
-                    
-                    VStack(spacing: 8) {
-                        Button(action: {
-                            focusMinutes = 25
-                            breakMinutes = 5
-                        }) {
-                            HStack {
-                                Text("pomodoro".localized + " (25\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primaryText)
-                                Spacer()
-                                if focusMinutes == 25 && breakMinutes == 5 {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.successColor)
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.subColor3.opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.subColor3.opacity(0.3), lineWidth: 1)
-                                    )
-                            )
-                        }
-                        .background(.clear)
-                        
-                        Button(action: {
-                            focusMinutes = 45
-                            breakMinutes = 15
-                        }) {
-                            HStack {
-                                Text("ultradeep".localized + " (45\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primaryText)
-                                Spacer()
-                                if focusMinutes == 45 && breakMinutes == 15 {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.successColor)
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(hex: "A4D0B4").opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color(hex: "A4D0B4").opacity(0.3), lineWidth: 1)
-                                    )
-                            )
-                        }
-                        .background(.clear)
-                        
-                        Button(action: {
-                            focusMinutes = 15
-                            breakMinutes = 5
-                        }) {
-                            HStack {
-                                Text("shortfocus".localized + " (15\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m")/5\(Locale.current.identifier.hasPrefix("ko") ? "분" : "m"))")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primaryText)
-                                Spacer()
-                                if focusMinutes == 15 && breakMinutes == 5 {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.successColor)
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(hex: "C1E2FF").opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color(hex: "C1E2FF").opacity(0.3), lineWidth: 1)
-                                    )
-                            )
-                        }
-                        .background(.clear)
-                    }
-                }
-                
-                Spacer()
-            }
-            .background(.clear)
-            .padding()
-            .navigationTitle("focus_settings".localized)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("save".localized) {
-                        dismiss()
-                    }
-                    .foregroundColor(.primaryText)
-                }
-            }
-        }
-        .background(Color(hex: "F7F5F2"))
-        .preferredColorScheme(.light)
-    }
-}
+
 
 // MARK: - Helper Methods for Motivation Message Colors
 extension FocusTimerView {

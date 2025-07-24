@@ -3,7 +3,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var dataManager = DataManager()
     @State private var selectedTab = 0
-    @State private var showingAddTask = false
     
     var body: some View {
         ZStack {
@@ -32,34 +31,8 @@ struct ContentView: View {
                 customTabBar
             }
             .ignoresSafeArea(.container, edges: .bottom)
-            
-            // Floating Action Button (할 일 탭에서만 표시)
-            if selectedTab == 0 {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: { showingAddTask = true }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 24, weight: .medium))
-                                .foregroundColor(.white)
-                                .frame(width: 56, height: 56)
-                                .background(
-                                    Circle()
-                                        .fill(Color.mainPoint)
-                                )
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.bottom, 108)
-                    }
-                }
-            }
         }
         .environmentObject(dataManager)
-        .sheet(isPresented: $showingAddTask) {
-            AddTaskView()
-                .environmentObject(dataManager)
-        }
     }
     
     // MARK: - Custom Tab Bar
@@ -110,10 +83,10 @@ struct ContentView: View {
     
     private func tabTitle(for index: Int) -> String {
         switch index {
-        case 0: return "할 일"
-        case 1: return "습관"
-        case 2: return "집중"
-        case 3: return "통계"
+        case 0: return "todos".localized
+        case 1: return "habits".localized
+        case 2: return "focus_timer".localized
+        case 3: return "statistics".localized
         default: return ""
         }
     }

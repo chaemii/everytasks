@@ -18,6 +18,8 @@
 "all" = "전체";
 "daily" = "일간";
 "monthly" = "월간";
+"weekly_habits" = "주간 습관";
+"monthly_habits" = "월간 습관";
 
 // MARK: - Todo
 "todo" = "할 일";
@@ -153,6 +155,10 @@
 "empty_state_no_todos" = "할 일이 없습니다";
 "empty_state_no_habits" = "습관이 없습니다";
 "empty_state_no_focus_sessions" = "집중 세션이 없습니다";
+"empty_todos_title" = "선택된 날짜에 할 일이 없습니다";
+"empty_todos_subtitle" = "새로운 할 일을 추가해보세요!";
+"empty_habits_title" = "아직 등록된 습관이 없습니다";
+"empty_habits_subtitle" = "새로운 습관을 추가해보세요!";
 
 // MARK: - Date Formats
 "date_format_month_day" = "M월 d일";

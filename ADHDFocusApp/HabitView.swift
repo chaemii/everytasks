@@ -8,6 +8,7 @@ struct HabitView: View {
     @State private var editingHabit: Habit?
     @State private var currentWeekOffset = 0
     @State private var currentMonthOffset = 0
+    @State private var showingActionsForHabit: UUID? = nil
     // 응원 메시지 템플릿 배열
     private var weeklyMotivationTemplates: [String] {
         return [
@@ -97,7 +98,9 @@ struct HabitView: View {
         .sheet(isPresented: $showingAddHabit) {
             AddHabitView()
         }
-        .sheet(isPresented: $showingEditHabit) {
+        .sheet(isPresented: $showingEditHabit, onDismiss: {
+            editingHabit = nil
+        }) {
             if let habit = editingHabit {
                 EditHabitView(habit: habit)
             }
@@ -158,9 +161,16 @@ struct HabitView: View {
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 6)
         .padding(.vertical, 6)
-        .padding(.top, 16)
+        .padding(.top, 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(hex: "#FFFDFA"))
+                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
     }
     
     // MARK: - Week Navigation
@@ -258,7 +268,7 @@ struct HabitView: View {
                 .padding(.horizontal, 20)
             
             HStack {
-                Text(selectedPeriod == .weekly ? "주간 습관" : "월간 습관")
+                Text(selectedPeriod == .weekly ? "weekly_habits".localized : "monthly_habits".localized)
                     .font(.headline)
                     .foregroundColor(.primaryText)
                 
@@ -295,7 +305,8 @@ struct HabitView: View {
                                     },
                                     onDelete: {
                                         dataManager.deleteHabit(habit)
-                                    }
+                                    },
+                                    isShowingActions: $showingActionsForHabit
                                 )
                             } else {
                                 HabitMonthCardView(
@@ -310,7 +321,8 @@ struct HabitView: View {
                                     },
                                     onDelete: {
                                         dataManager.deleteHabit(habit)
-                                    }
+                                    },
+                                    isShowingActions: $showingActionsForHabit
                                 )
                             }
                         }
@@ -325,16 +337,16 @@ struct HabitView: View {
     
     // MARK: - Empty State View
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             Image(systemName: "heart.fill")
-                .font(.system(size: 15))
+                .font(.system(size: 30))
                 .foregroundColor(.successColor)
             
-            Text("아직 등록된 습관이 없습니다")
+            Text("empty_habits_title".localized)
                 .font(.system(size: 16))
                 .foregroundColor(.secondaryText)
             
-            Text("새로운 습관을 추가해보세요!")
+            Text("empty_habits_subtitle".localized)
                 .font(.system(size: 14))
                 .foregroundColor(.secondaryText.opacity(0.7))
         }
@@ -487,7 +499,11 @@ struct HabitCardView: View {
     let onEdit: () -> Void
     let onDelete: () -> Void
     
-    @State private var showingActions = false
+    @Binding var isShowingActions: UUID?
+    
+    private var showingActions: Bool {
+        return isShowingActions == habit.id
+    }
     
     private var days: [String] {
         return [
@@ -554,7 +570,11 @@ struct HabitCardView: View {
                 // Three dots menu button
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        showingActions.toggle()
+                        if showingActions {
+                            isShowingActions = nil
+                        } else {
+                            isShowingActions = habit.id
+                        }
                     }
                 }) {
                     Image(systemName: "ellipsis")
@@ -576,7 +596,10 @@ struct HabitCardView: View {
                 
                 if showingActions {
                     HStack(spacing: 8) {
-                        Button(action: onEdit) {
+                        Button(action: {
+                            isShowingActions = nil
+                            onEdit()
+                        }) {
                             Image(systemName: "pencil")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -585,7 +608,10 @@ struct HabitCardView: View {
                                 .cornerRadius(8)
                         }
                         
-                        Button(action: onDelete) {
+                        Button(action: {
+                            isShowingActions = nil
+                            onDelete()
+                        }) {
                             Image(systemName: "trash")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -599,6 +625,13 @@ struct HabitCardView: View {
                 }
             }
         )
+        .onTapGesture {
+            if showingActions {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isShowingActions = nil
+                }
+            }
+        }
     }
     
     private func isCompletedForDate(_ date: Date) -> Bool {
@@ -698,7 +731,11 @@ struct HabitMonthCardView: View {
     let onEdit: () -> Void
     let onDelete: () -> Void
     
-    @State private var showingActions = false
+    @Binding var isShowingActions: UUID?
+    
+    private var showingActions: Bool {
+        return isShowingActions == habit.id
+    }
     
     private var habitBackgroundColor: Color {
         return Color(hex: "FFFDFA")
@@ -735,7 +772,15 @@ struct HabitMonthCardView: View {
             
             // Weekday headers
             HStack(spacing: 4) {
-                ForEach(["일", "월", "화", "수", "목", "금", "토"], id: \.self) { day in
+                ForEach([
+                    "weekday_sun_short".localized,
+                    "weekday_mon_short".localized,
+                    "weekday_tue_short".localized,
+                    "weekday_wed_short".localized,
+                    "weekday_thu_short".localized,
+                    "weekday_fri_short".localized,
+                    "weekday_sat_short".localized
+                ], id: \.self) { day in
                     Text(day)
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.secondaryText)
@@ -764,7 +809,11 @@ struct HabitMonthCardView: View {
                 Spacer()
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        showingActions.toggle()
+                        if showingActions {
+                            isShowingActions = nil
+                        } else {
+                            isShowingActions = habit.id
+                        }
                     }
                 }) {
                     Image(systemName: "ellipsis")
@@ -786,7 +835,10 @@ struct HabitMonthCardView: View {
                 
                 if showingActions {
                     HStack(spacing: 8) {
-                        Button(action: onEdit) {
+                        Button(action: {
+                            isShowingActions = nil
+                            onEdit()
+                        }) {
                             Image(systemName: "pencil")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -795,7 +847,10 @@ struct HabitMonthCardView: View {
                                 .cornerRadius(8)
                         }
                         
-                        Button(action: onDelete) {
+                        Button(action: {
+                            isShowingActions = nil
+                            onDelete()
+                        }) {
                             Image(systemName: "trash")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
@@ -809,6 +864,13 @@ struct HabitMonthCardView: View {
                 }
             }
         )
+        .onTapGesture {
+            if showingActions {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isShowingActions = nil
+                }
+            }
+        }
     }
     
     private func isCompletedForDate(_ date: Date) -> Bool {
@@ -914,7 +976,15 @@ struct AddHabitView: View {
         ADHDTheme.subColor3
     ]
     
-    private let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+    private let weekdays = [
+        "weekday_sun_short".localized,
+        "weekday_mon_short".localized,
+        "weekday_tue_short".localized,
+        "weekday_wed_short".localized,
+        "weekday_thu_short".localized,
+        "weekday_fri_short".localized,
+        "weekday_sat_short".localized
+    ]
     private let monthDays = Array(1...31)
     
     var body: some View {
@@ -932,7 +1002,7 @@ struct AddHabitView: View {
                             TextField("form_habit_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -947,7 +1017,7 @@ struct AddHabitView: View {
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -988,67 +1058,37 @@ struct AddHabitView: View {
                         
                         // Weekly Selection
                         if frequency == .weekly {
-                            VStack(spacing: 12) {
-                                HStack(spacing: 12) {
-                                    Text("form_weekdays".localized)
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.primaryText)
-                                        .frame(width: 60, alignment: .leading)
-                                    
-                                    Spacer()
-                                }
+                            HStack(spacing: 12) {
+                                Text("form_weekdays".localized)
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.primaryText)
+                                    .frame(width: 60, alignment: .leading)
                                 
-                                VStack(spacing: 8) {
-                                    HStack(spacing: 8) {
-                                        ForEach(0..<4) { index in
-                                            Button(action: {
-                                                if selectedWeekdays.contains(index) {
-                                                    selectedWeekdays.removeAll { $0 == index }
-                                                } else {
-                                                    selectedWeekdays.append(index)
-                                                }
-                                            }) {
-                                                Text(weekdays[index])
-                                                    .font(.system(size: 12, weight: .medium))
-                                                    .foregroundColor(selectedWeekdays.contains(index) ? .white : .mainPoint)
-                                                    .frame(width: 36, height: 36)
-                                                    .background(
-                                                        Circle()
-                                                            .fill(selectedWeekdays.contains(index) ? Color.mainPoint : Color.cardBackground)
-                                                            .overlay(
-                                                                Circle()
-                                                                    .stroke(Color.mainPoint, lineWidth: 1)
-                                                            )
-                                                    )
+                                HStack(spacing: 6) {
+                                    ForEach(0..<7) { index in
+                                        Button(action: {
+                                            if selectedWeekdays.contains(index) {
+                                                selectedWeekdays.removeAll { $0 == index }
+                                            } else {
+                                                selectedWeekdays.append(index)
                                             }
-                                        }
-                                    }
-                                    
-                                    HStack(spacing: 8) {
-                                        ForEach(4..<7) { index in
-                                            Button(action: {
-                                                if selectedWeekdays.contains(index) {
-                                                    selectedWeekdays.removeAll { $0 == index }
-                                                } else {
-                                                    selectedWeekdays.append(index)
-                                                }
-                                            }) {
-                                                Text(weekdays[index])
-                                                    .font(.system(size: 12, weight: .medium))
-                                                    .foregroundColor(selectedWeekdays.contains(index) ? .white : .mainPoint)
-                                                    .frame(width: 36, height: 36)
-                                                    .background(
-                                                        Circle()
-                                                            .fill(selectedWeekdays.contains(index) ? Color.mainPoint : Color.cardBackground)
-                                                            .overlay(
-                                                                Circle()
-                                                                    .stroke(Color.mainPoint, lineWidth: 1)
-                                                            )
-                                                    )
-                                            }
+                                        }) {
+                                            Text(weekdays[index])
+                                                .font(.system(size: 11, weight: .medium))
+                                                .foregroundColor(selectedWeekdays.contains(index) ? .white : .mainPoint)
+                                                .frame(width: 32, height: 32)
+                                                .background(
+                                                    Circle()
+                                                        .fill(selectedWeekdays.contains(index) ? Color.mainPoint : Color.cardBackground)
+                                                        .overlay(
+                                                            Circle()
+                                                                .stroke(Color.mainPoint, lineWidth: 1)
+                                                        )
+                                                )
                                         }
                                     }
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
                         
@@ -1060,12 +1100,13 @@ struct AddHabitView: View {
                                     .foregroundColor(.primaryText)
                                     .frame(width: 60, alignment: .leading)
                                 
-                                Picker("일자 선택", selection: $selectedDayOfMonth) {
+                                Picker("form_day_of_month_placeholder".localized, selection: $selectedDayOfMonth) {
                                     ForEach(monthDays, id: \.self) { day in
-                                        Text("\(day)일").tag(day)
+                                        Text("\(day)\(Locale.current.identifier.hasPrefix("ko") ? "일" : "")").tag(day)
                                     }
                                 }
                                 .pickerStyle(WheelPickerStyle())
+                                .frame(height: 120)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
@@ -1200,7 +1241,7 @@ struct EditHabitView: View {
                             TextField("edit_form_habit_title_placeholder".localized, text: $title)
                                 .font(.system(size: 14))
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -1211,11 +1252,11 @@ struct EditHabitView: View {
                                 .foregroundColor(.primaryText)
                                 .frame(width: 60, alignment: .leading)
                             
-                            TextField("edit_form_description_placeholder".localized, text: $description, axis: .vertical)
+                            TextField("form_description_placeholder".localized, text: $description, axis: .vertical)
                                 .font(.system(size: 14))
                                 .lineLimit(3...6)
                                 .padding()
-                                .background(.clear)
+                                .background(Color(hex: "#FFFDFA"))
                                 .cornerRadius(8)
                         }
                         
@@ -1266,54 +1307,27 @@ struct EditHabitView: View {
                                     Spacer()
                                 }
                                 
-                                VStack(spacing: 8) {
-                                    HStack(spacing: 8) {
-                                        ForEach(0..<4) { index in
-                                            Button(action: {
-                                                if selectedWeekdays.contains(index) {
-                                                    selectedWeekdays.removeAll { $0 == index }
-                                                } else {
-                                                    selectedWeekdays.append(index)
-                                                }
-                                            }) {
-                                                Text(weekdays[index])
-                                                    .font(.system(size: 12, weight: .medium))
-                                                    .foregroundColor(selectedWeekdays.contains(index) ? .white : .mainPoint)
-                                                    .frame(width: 36, height: 36)
-                                                    .background(
-                                                        Circle()
-                                                            .fill(selectedWeekdays.contains(index) ? Color.mainPoint : Color.cardBackground)
-                                                            .overlay(
-                                                                Circle()
-                                                                    .stroke(Color.mainPoint, lineWidth: 1)
-                                                            )
-                                                    )
+                                HStack(spacing: 8) {
+                                    ForEach(0..<7) { index in
+                                        Button(action: {
+                                            if selectedWeekdays.contains(index) {
+                                                selectedWeekdays.removeAll { $0 == index }
+                                            } else {
+                                                selectedWeekdays.append(index)
                                             }
-                                        }
-                                    }
-                                    
-                                    HStack(spacing: 8) {
-                                        ForEach(4..<7) { index in
-                                            Button(action: {
-                                                if selectedWeekdays.contains(index) {
-                                                    selectedWeekdays.removeAll { $0 == index }
-                                                } else {
-                                                    selectedWeekdays.append(index)
-                                                }
-                                            }) {
-                                                Text(weekdays[index])
-                                                    .font(.system(size: 12, weight: .medium))
-                                                    .foregroundColor(selectedWeekdays.contains(index) ? .white : .mainPoint)
-                                                    .frame(width: 36, height: 36)
-                                                    .background(
-                                                        Circle()
-                                                            .fill(selectedWeekdays.contains(index) ? Color.mainPoint : Color.cardBackground)
-                                                            .overlay(
-                                                                Circle()
-                                                                    .stroke(Color.mainPoint, lineWidth: 1)
-                                                            )
-                                                    )
-                                            }
+                                        }) {
+                                            Text(weekdays[index])
+                                                .font(.system(size: 12, weight: .medium))
+                                                .foregroundColor(selectedWeekdays.contains(index) ? .white : .mainPoint)
+                                                .frame(width: 36, height: 36)
+                                                .background(
+                                                    Circle()
+                                                        .fill(selectedWeekdays.contains(index) ? Color.mainPoint : Color.cardBackground)
+                                                        .overlay(
+                                                            Circle()
+                                                                .stroke(Color.mainPoint, lineWidth: 1)
+                                                        )
+                                                )
                                         }
                                     }
                                 }
@@ -1334,6 +1348,7 @@ struct EditHabitView: View {
                                     }
                                 }
                                 .pickerStyle(WheelPickerStyle())
+                                .frame(height: 120)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
