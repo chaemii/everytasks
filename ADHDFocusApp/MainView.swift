@@ -227,18 +227,13 @@ struct MainView: View {
                                 .foregroundColor(isSelected ? .white : (isToday ? .mainPoint : .primaryText))
                             
                             if hasEvents {
-                                HStack(spacing: 2) {
-                                    Circle()
-                                        .fill(Color.subColor2)
-                                        .frame(width: 4, height: 4)
-                                    Circle()
-                                        .fill(Color.subColor3)
-                                        .frame(width: 4, height: 4)
-                                }
+                                Circle()
+                                    .fill(Color.subColor3)
+                                    .frame(width: 4, height: 4)
                             } else {
                                 Circle()
                                     .fill(Color.clear)
-                                    .frame(width: 8, height: 4)
+                                    .frame(width: 4, height: 4)
                             }
                         }
                         .frame(maxWidth: .infinity)
