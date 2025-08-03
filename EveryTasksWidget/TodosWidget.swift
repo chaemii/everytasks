@@ -33,44 +33,50 @@ struct TodosWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             // 헤더
             HStack {
                 Image(systemName: "checklist")
-                    .foregroundColor(.orange)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(Color(hex: "C1E2FF"))
                 Text("오늘의 할일")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Color(hex: "282828"))
                 Spacer()
             }
-            .padding(.bottom, 4)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .background(Color(hex: "FFFDFA"))
+            .cornerRadius(6)
             
             if entry.todos.isEmpty {
                 // 할일이 없을 때
-                VStack(spacing: 4) {
-                    Image(systemName: "plus.circle")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
+                VStack(spacing: 3) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(Color(hex: "A4D0B4"))
                     Text("할일을 추가해보세요")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Color(hex: "282828").opacity(0.7))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 4)
+                .background(Color(hex: "FFFDFA"))
+                .cornerRadius(6)
             } else {
                 // 할일 목록
-                LazyVStack(alignment: .leading, spacing: 6) {
+                LazyVStack(alignment: .leading, spacing: 3) {
                     ForEach(entry.todos, id: \.id) { todo in
                         SharedTodoRowView(todo: todo)
                     }
                 }
             }
         }
-        .padding()
-        .background(Color(.systemBackground))
+        .padding(10)
+        .background(Color(hex: "FFFDFA"))
     }
 }
-
-
 
 struct TodosWidget: Widget {
     let kind: String = "com.chaeeun.everytask.todos.widget"
