@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import WidgetKit
 
 class DataManager: ObservableObject {
     @Published var todos: [Todo] = []
@@ -13,9 +14,12 @@ class DataManager: ObservableObject {
     private let statisticsKey = "statistics"
     private let dataVersionKey = "dataVersion"
     private let currentDataVersion = "1.0"
+    private let widgetUserDefaults = UserDefaults(suiteName: "group.everytasks")
     
     init() {
         loadData()
+        setupSampleDataIfNeeded()
+        shareDataWithWidget() // 초기 데이터를 위젯과 공유
     }
     
     // MARK: - Todo Management
@@ -207,6 +211,9 @@ class DataManager: ObservableObject {
             // Force UserDefaults to save immediately
             UserDefaults.standard.synchronize()
             
+            // 위젯과 데이터 공유
+            shareDataWithWidget()
+            
         } catch {
             print("Error saving data: \(error)")
         }
@@ -240,6 +247,51 @@ class DataManager: ObservableObject {
             habits = []
             focusSessions = []
             statistics = Statistics()
+        }
+    }
+    
+    // MARK: - Widget Data Sharing
+    private func shareDataWithWidget() {
+        let today = Date()
+        let calendar = Calendar.current
+        
+        // 모든 활성 습관들 (오늘 완료 여부 표시)
+        let todayHabits = habits.filter { $0.isActive }.map { habit -> SharedHabit in
+            let isCompletedToday = habit.completedDates.contains { completedDate in
+                calendar.isDate(completedDate, inSameDayAs: today)
+            }
+            return SharedHabit(
+                id: habit.id.uuidString,
+                title: habit.title,
+                isCompleted: isCompletedToday,
+                date: today
+            )
+        }
+        
+        // 모든 할일들 (완료되지 않은 것 우선, 최대 5개)
+        let todayTodos = todos
+            .sorted { !$0.isCompleted && $1.isCompleted } // 미완료 우선
+            .prefix(5)
+            .map { todo -> SharedTodo in
+                return SharedTodo(
+                    id: todo.id.uuidString,
+                    title: todo.title,
+                    isCompleted: todo.isCompleted,
+                    date: todo.createdDate
+                )
+            }
+        
+        let sharedData = SharedData(
+            habits: Array(todayHabits),
+            todos: Array(todayTodos),
+            lastUpdated: Date()
+        )
+        
+        if let encoded = try? JSONEncoder().encode(sharedData) {
+            widgetUserDefaults?.set(encoded, forKey: "sharedData")
+            #if canImport(WidgetKit)
+            WidgetCenter.shared.reloadAllTimelines()
+            #endif
         }
     }
     

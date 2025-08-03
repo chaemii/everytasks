@@ -7,10 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C225FD282E3F5C0700C88ED8 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C225FD272E3F5C0700C88ED8 /* WidgetKit.framework */; };
+		C225FD2A2E3F5C0700C88ED8 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C225FD292E3F5C0700C88ED8 /* SwiftUI.framework */; };
+		C225FD392E3F5C0900C88ED8 /* EveryTasksWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C225FD252E3F5C0700C88ED8 /* EveryTasksWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C2DDAF1A2E2A0AF5005B2C3C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = C2DDAF192E2A0AF5005B2C3C /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C225FD372E3F5C0900C88ED8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2DDADD42E251668005B2C3C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C225FD242E3F5C0700C88ED8;
+			remoteInfo = EveryTasksWidgetExtension;
+		};
 		C2DDADEA2E251669005B2C3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C2DDADD42E251668005B2C3C /* Project object */;
@@ -27,13 +37,50 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		C225FD3A2E3F5C0900C88ED8 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C225FD392E3F5C0900C88ED8 /* EveryTasksWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		C225FD252E3F5C0700C88ED8 /* EveryTasksWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EveryTasksWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C225FD272E3F5C0700C88ED8 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C225FD292E3F5C0700C88ED8 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C225FD3F2E3F5C1600C88ED8 /* EveryTasksWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EveryTasksWidgetExtension.entitlements; sourceTree = "<group>"; };
+		C225FD402E3F5C2000C88ED8 /* EveryTasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EveryTasks.entitlements; sourceTree = "<group>"; };
 		C2DDADDC2E251668005B2C3C /* EveryTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EveryTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2DDADE92E251669005B2C3C /* ADHDFocusAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ADHDFocusAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2DDADF32E251669005B2C3C /* ADHDFocusAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ADHDFocusAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C225FD3D2E3F5C0900C88ED8 /* Exceptions for "EveryTasksWidget" folder in "EveryTasksWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C225FD242E3F5C0700C88ED8 /* EveryTasksWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C225FD2B2E3F5C0700C88ED8 /* EveryTasksWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C225FD3D2E3F5C0900C88ED8 /* Exceptions for "EveryTasksWidget" folder in "EveryTasksWidgetExtension" target */,
+			);
+			path = EveryTasksWidget;
+			sourceTree = "<group>";
+		};
 		C2DDADDE2E251668005B2C3C /* ADHDFocusApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ADHDFocusApp;
@@ -52,6 +99,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C225FD222E3F5C0700C88ED8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C225FD2A2E3F5C0700C88ED8 /* SwiftUI.framework in Frameworks */,
+				C225FD282E3F5C0700C88ED8 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C2DDADD92E251668005B2C3C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -77,12 +133,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C225FD262E3F5C0700C88ED8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C225FD272E3F5C0700C88ED8 /* WidgetKit.framework */,
+				C225FD292E3F5C0700C88ED8 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C2DDADD32E251668005B2C3C = {
 			isa = PBXGroup;
 			children = (
+				C225FD402E3F5C2000C88ED8 /* EveryTasks.entitlements */,
+				C225FD3F2E3F5C1600C88ED8 /* EveryTasksWidgetExtension.entitlements */,
 				C2DDADDE2E251668005B2C3C /* ADHDFocusApp */,
 				C2DDADEC2E251669005B2C3C /* ADHDFocusAppTests */,
 				C2DDADF62E251669005B2C3C /* ADHDFocusAppUITests */,
+				C225FD2B2E3F5C0700C88ED8 /* EveryTasksWidget */,
+				C225FD262E3F5C0700C88ED8 /* Frameworks */,
 				C2DDADDD2E251668005B2C3C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,6 +162,7 @@
 				C2DDADDC2E251668005B2C3C /* EveryTasks.app */,
 				C2DDADE92E251669005B2C3C /* ADHDFocusAppTests.xctest */,
 				C2DDADF32E251669005B2C3C /* ADHDFocusAppUITests.xctest */,
+				C225FD252E3F5C0700C88ED8 /* EveryTasksWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,6 +170,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C225FD242E3F5C0700C88ED8 /* EveryTasksWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C225FD3E2E3F5C0900C88ED8 /* Build configuration list for PBXNativeTarget "EveryTasksWidgetExtension" */;
+			buildPhases = (
+				C225FD212E3F5C0700C88ED8 /* Sources */,
+				C225FD222E3F5C0700C88ED8 /* Frameworks */,
+				C225FD232E3F5C0700C88ED8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C225FD2B2E3F5C0700C88ED8 /* EveryTasksWidget */,
+			);
+			name = EveryTasksWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = EveryTasksWidgetExtension;
+			productReference = C225FD252E3F5C0700C88ED8 /* EveryTasksWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		C2DDADDB2E251668005B2C3C /* EveryTasks */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C2DDADFD2E251669005B2C3C /* Build configuration list for PBXNativeTarget "EveryTasks" */;
@@ -107,10 +199,12 @@
 				C2DDADD82E251668005B2C3C /* Sources */,
 				C2DDADD92E251668005B2C3C /* Frameworks */,
 				C2DDADDA2E251668005B2C3C /* Resources */,
+				C225FD3A2E3F5C0900C88ED8 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C225FD382E3F5C0900C88ED8 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C2DDADDE2E251668005B2C3C /* ADHDFocusApp */,
@@ -179,6 +273,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					C225FD242E3F5C0700C88ED8 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					C2DDADDB2E251668005B2C3C = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -213,11 +310,19 @@
 				C2DDADDB2E251668005B2C3C /* EveryTasks */,
 				C2DDADE82E251669005B2C3C /* ADHDFocusAppTests */,
 				C2DDADF22E251669005B2C3C /* ADHDFocusAppUITests */,
+				C225FD242E3F5C0700C88ED8 /* EveryTasksWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C225FD232E3F5C0700C88ED8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C2DDADDA2E251668005B2C3C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -242,6 +347,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C225FD212E3F5C0700C88ED8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C2DDADD82E251668005B2C3C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -266,6 +378,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C225FD382E3F5C0900C88ED8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C225FD242E3F5C0700C88ED8 /* EveryTasksWidgetExtension */;
+			targetProxy = C225FD372E3F5C0900C88ED8 /* PBXContainerItemProxy */;
+		};
 		C2DDADEB2E251669005B2C3C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C2DDADDB2E251668005B2C3C /* EveryTasks */;
@@ -279,6 +396,62 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		C225FD3B2E3F5C0900C88ED8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EveryTasksWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.2.0;
+				DEVELOPMENT_TEAM = RPFY97S3D3;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EveryTasksWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EveryTasksWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaeeun.everytask.EveryTasksWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C225FD3C2E3F5C0900C88ED8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EveryTasksWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.2.0;
+				DEVELOPMENT_TEAM = RPFY97S3D3;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EveryTasksWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EveryTasksWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chaeeun.everytask.EveryTasksWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C2DDADFB2E251669005B2C3C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -403,6 +576,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EveryTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.2.0;
 				DEVELOPMENT_TEAM = RPFY97S3D3;
@@ -432,6 +606,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EveryTasks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.2.0;
 				DEVELOPMENT_TEAM = RPFY97S3D3;
@@ -527,6 +702,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C225FD3E2E3F5C0900C88ED8 /* Build configuration list for PBXNativeTarget "EveryTasksWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C225FD3B2E3F5C0900C88ED8 /* Debug */,
+				C225FD3C2E3F5C0900C88ED8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C2DDADD72E251668005B2C3C /* Build configuration list for PBXProject "ADHDFocusApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
