@@ -308,31 +308,12 @@ class DataManager: ObservableObject {
     
     // MARK: - Sample Data (only if no data exists)
     private func setupSampleDataIfNeeded() {
-        // Only add sample data if no data exists
-        guard todos.isEmpty && habits.isEmpty else { return }
+        // 처음 다운받은 사용자에게는 빈 상태로 시작
+        // 샘플 데이터는 제거하여 사용자가 직접 추가하도록 함
+        // guard todos.isEmpty && habits.isEmpty else { return }
         
-        // Add sample todos
-        let sampleTodos = [
-            Todo(title: "물마시기".localized, description: "하루 8잔 마시기".localized, priority: .medium, category: .habit),
-            Todo(title: "운동하기".localized, description: "30분 걷기".localized, priority: .high, category: .health),
-            Todo(title: "매일 블로그".localized, description: "3개 쓰기".localized, priority: .medium, category: .personal),
-            Todo(title: "카레 요리하기".localized, description: "맛있겠당".localized, priority: .high, category: .personal),
-            Todo(title: "독서하기".localized, description: "30분 독서".localized, priority: .low, category: .study),
-            Todo(title: "명상하기".localized, description: "10분 명상".localized, priority: .medium, category: .health)
-        ]
-        
-        // Add sample habits
-        let sampleHabits = [
-            Habit(title: "야".localized, description: "테스트 습관".localized, category: .health, color: "F68566"),
-            Habit(title: "물마시기".localized, description: "하루 8잔 마시기".localized, category: .health, color: "C1E2FF"),
-            Habit(title: "운동하기".localized, description: "30분 걷기".localized, category: .exercise, color: "A4D0B4"),
-            Habit(title: "독서하기".localized, description: "30분 독서".localized, category: .study, color: "FBEACC")
-        ]
-        
-        todos = sampleTodos
-        habits = sampleHabits
-        saveData()
-        updateStatistics()
+        // 샘플 데이터 생성 비활성화
+        // 사용자가 직접 할일과 습관을 추가할 수 있도록 빈 상태 유지
     }
     
     // MARK: - Utility Methods
