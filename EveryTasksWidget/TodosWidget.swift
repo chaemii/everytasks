@@ -44,8 +44,6 @@ struct TodosWidgetEntryView: View {
                     .foregroundColor(Color(hex: "282828"))
                 Spacer()
             }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
             .background(Color(hex: "FFFDFA"))
             .cornerRadius(6)
             
@@ -60,8 +58,6 @@ struct TodosWidgetEntryView: View {
                         .foregroundColor(Color(hex: "282828").opacity(0.7))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 4)
                 .background(Color(hex: "FFFDFA"))
                 .cornerRadius(6)
             } else {
@@ -73,7 +69,6 @@ struct TodosWidgetEntryView: View {
                 }
             }
         }
-        .padding(10)
         .background(Color(hex: "FFFDFA"))
     }
 }

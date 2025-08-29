@@ -28,8 +28,6 @@ struct SharedHabitRowView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 4)
         .background(Color(hex: "FFFDFA"))
         .cornerRadius(6)
     }
@@ -63,8 +61,6 @@ struct SharedTodoRowView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 4)
         .background(Color(hex: "FFFDFA"))
         .cornerRadius(6)
     }
