@@ -36,6 +36,7 @@ struct TodosWidgetEntryView: View {
         VStack(alignment: .leading, spacing: 6) {
             // 헤더
             HStack {
+                Spacer()
                 Image(systemName: "checklist")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(Color(hex: "C1E2FF"))
@@ -44,6 +45,8 @@ struct TodosWidgetEntryView: View {
                     .foregroundColor(Color(hex: "282828"))
                 Spacer()
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
             .background(Color(hex: "FFFDFA"))
             .cornerRadius(6)
             .padding(.bottom, 8)
