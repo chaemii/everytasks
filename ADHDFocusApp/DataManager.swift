@@ -271,10 +271,10 @@ class DataManager: ObservableObject {
             )
         }
         
-        // 오늘 날짜의 할일들만 (완료되지 않은 것 우선, 최대 5개)
+        // 오늘 날짜에 해당하는 할일들만 (완료되지 않은 것 우선, 최대 5개)
         let todayTodos = todos.filter { todo in
-            // 오늘 생성된 할일만 필터링
-            calendar.isDate(todo.createdDate, inSameDayAs: today)
+            // 오늘 날짜에 해당하는 할일만 필터링
+            calendar.isDate(todo.targetDate, inSameDayAs: today)
         }.sorted { !$0.isCompleted && $1.isCompleted } // 미완료 우선
         .prefix(5)
         .map { todo -> SharedTodo in
@@ -282,7 +282,7 @@ class DataManager: ObservableObject {
                 id: todo.id.uuidString,
                 title: todo.title,
                 isCompleted: todo.isCompleted,
-                date: todo.createdDate
+                date: todo.targetDate
             )
         }
         
