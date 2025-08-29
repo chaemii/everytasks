@@ -46,6 +46,7 @@ struct TodosWidgetEntryView: View {
             }
             .background(Color(hex: "FFFDFA"))
             .cornerRadius(6)
+            .padding(.bottom, 8)
             
             if entry.todos.isEmpty {
                 // 할일이 없을 때

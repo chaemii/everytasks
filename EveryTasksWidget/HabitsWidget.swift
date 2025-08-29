@@ -46,6 +46,7 @@ struct HabitsWidgetEntryView: View {
             }
             .background(Color(hex: "FFFDFA"))
             .cornerRadius(6)
+            .padding(.bottom, 8)
             
             if entry.habits.isEmpty {
                 // 습관이 없을 때
